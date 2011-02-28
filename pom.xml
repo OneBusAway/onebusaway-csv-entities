@@ -1,20 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.onebusaway</groupId>
-    <artifactId>onebusaway-csv-entities</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-    
-    <name>onebusaway-csv-entities</name>
-    <description>A Java library for reading and writing entities from comma-separated-values files</description>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.onebusaway</groupId>
+  <artifactId>onebusaway-csv-entities</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
 
-    <parent>
-        <groupId>org.onebusaway</groupId>
-        <artifactId>onebusaway</artifactId>
-        <version>1.1.0</version>
-    </parent>
-    
-      <repositories>
+  <name>onebusaway-csv-entities</name>
+  <description>A Java library for reading and writing entities from comma-separated-values files</description>
+
+  <parent>
+    <groupId>org.onebusaway</groupId>
+    <artifactId>onebusaway</artifactId>
+    <version>1.1.0</version>
+  </parent>
+
+  <repositories>
     <repository>
       <id>releases.developer.onebusaway.org</id>
       <url>http://developer.onebusaway.org/maven/repository/</url>
@@ -51,35 +52,35 @@
     </site>
   </distributionManagement>
 
-    <dependencies>
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>1.7.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.5.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.6</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.4</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.8.0</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.7.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.5.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.5.6</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.4</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>1.8.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>

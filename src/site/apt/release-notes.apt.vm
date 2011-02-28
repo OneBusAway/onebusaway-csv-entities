@@ -1,0 +1,7 @@
+Release Notes
+
+* ${currentVersion}
+
+  * Initial creation from original <<<onebusaway-gtfs>>> source
+  
+  * Full Documentation: {{${site_base_url}/onebusaway-collections/${currentVersion}/}}

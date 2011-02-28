@@ -2,6 +2,10 @@ Release Notes
 
 * ${currentVersion}
 
+  * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
+
+* 1.0.0
+
   * Initial creation from original <<<onebusaway-gtfs>>> source
   
-  * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
+  * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/1.0.0/}}

@@ -92,6 +92,10 @@ public class CsvEntityReader {
     readEntities(entityClass, new InputStreamReader(is, "UTF-8"));
   }
 
+  public void goFerris() {
+    
+  }
+  
   public void readEntities(Class<?> entityClass, Reader reader)
       throws IOException, CsvEntityIOException {
 
@@ -118,7 +122,10 @@ public class CsvEntityReader {
 
     try {
       while ((line = lineReader.readLine()) != null) {
-        if (line.isEmpty())
+        if( line.isEmpty() )
+          continue;
+        // TODO: This is a hack of sorts to deal with a malformed data file...
+        if( line.length() == 1 && line.charAt(0) == 26)
           continue;
         List<String> values = _tokenizerStrategy.parse(line);
         if (_internStrings)

@@ -28,7 +28,7 @@ public class CsvEntityReader {
   private CsvEntityContextImpl _context = new CsvEntityContextImpl();
 
   private CsvInputSource _source;
-  
+
   private TokenizerStrategy _tokenizerStrategy = new CsvTokenizerStrategy();
 
   private List<EntityHandler> _handlers = new ArrayList<EntityHandler>();
@@ -55,7 +55,7 @@ public class CsvEntityReader {
     else
       _source = new ZipFileCsvInputSource(new ZipFile(path));
   }
-  
+
   public void setTokenizerStrategy(TokenizerStrategy tokenizerStrategy) {
     _tokenizerStrategy = tokenizerStrategy;
   }
@@ -71,7 +71,7 @@ public class CsvEntityReader {
   public CsvEntityContext getContext() {
     return _context;
   }
-  
+
   public void setInternStrings(boolean internStrings) {
     _internStrings = internStrings;
   }
@@ -118,8 +118,10 @@ public class CsvEntityReader {
 
     try {
       while ((line = lineReader.readLine()) != null) {
+        if (line.isEmpty())
+          continue;
         List<String> values = _tokenizerStrategy.parse(line);
-        if( _internStrings )
+        if (_internStrings)
           internStrings(values);
         entityLoader.handleLine(values);
         lineNumber++;
@@ -155,10 +157,9 @@ public class CsvEntityReader {
     if (_source != null)
       _source.close();
   }
-  
 
   private void internStrings(List<String> values) {
-    for( int i=0; i<values.size(); i++ ) {
+    for (int i = 0; i < values.size(); i++) {
       String value = values.get(i);
       value = value.intern();
       values.set(i, value);

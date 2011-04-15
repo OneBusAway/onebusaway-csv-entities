@@ -23,3 +23,7 @@ Using in Maven
     </dependency>
 </dependencies>
 +---+
+
+#if( $currentVersion.contains('SNAPSHOT') )
+  To use a SNAPSHOT version of the library, you'll need to {{{https://code.google.com/p/onebusaway/wiki/MavenRepository}add a reference to the OneBusAway Maven repository}}.
+#end

@@ -67,4 +67,34 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.mycila.maven-license-plugin</groupId>
+        <artifactId>maven-license-plugin</artifactId>
+        <version>1.9.0</version>
+        <configuration>
+          <header>src/license/header.txt</header>
+          <excludes>
+            <exclude>src/site/**</exclude>
+            <exclude>LICENSE.txt</exclude>
+          </excludes>
+          <strictCheck>true</strictCheck>
+          <properties>
+            <license.name>Brian Ferris</license.name>
+            <license.email>bdferris@onebusaway.org</license.email>
+            <license.year>2011</license.year>
+          </properties>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

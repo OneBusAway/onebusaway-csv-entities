@@ -92,10 +92,6 @@ public class CsvEntityReader {
     readEntities(entityClass, new InputStreamReader(is, "UTF-8"));
   }
 
-  public void goFerris() {
-    
-  }
-  
   public void readEntities(Class<?> entityClass, Reader reader)
       throws IOException, CsvEntityIOException {
 

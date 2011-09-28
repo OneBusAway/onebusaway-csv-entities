@@ -133,10 +133,10 @@ public class CsvEntityReader {
 
     try {
       while ((line = lineReader.readLine()) != null) {
-        if( line.isEmpty() )
+        if (line.isEmpty())
           continue;
         // TODO: This is a hack of sorts to deal with a malformed data file...
-        if( line.length() == 1 && line.charAt(0) == 26)
+        if (line.length() == 1 && line.charAt(0) == 26)
           continue;
         List<String> values = _tokenizerStrategy.parse(line);
         if (_internStrings)
@@ -154,6 +154,18 @@ public class CsvEntityReader {
 
       }
     }
+  }
+
+  /**
+   * Sometimes it may be necessary to inject an instantiated entity directly
+   * instead of loading it from a CSV source. This method allows you to add a
+   * new entity, with all handlers called for that entity as if it had just been
+   * read from a source.
+   * 
+   * @param entity the entity to be injected
+   */
+  public void injectEntity(Object entity) {
+    _handler.handleEntity(entity);
   }
 
   public InputStream openInputStreamForEntityClass(CsvInputSource source,

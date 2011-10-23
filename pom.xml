@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.onebusaway</groupId>
   <artifactId>onebusaway-csv-entities</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.2</version>
   <packaging>jar</packaging>
 
   <name>onebusaway-csv-entities</name>
@@ -22,9 +22,9 @@
   </repositories>
 
   <scm>
-    <connection>scm:svn:http://onebusaway.googlecode.com/svn/onebusaway-csv-entities/trunk</connection>
-    <developerConnection>scm:svn:https://onebusaway.googlecode.com/svn/onebusaway-csv-entities/trunk</developerConnection>
-    <url>http://code.google.com/p/onebusaway/source/browse/#svn/onebusaway-csv-entities/trunk</url>
+    <connection>scm:svn:http://onebusaway.googlecode.com/svn/onebusaway-csv-entities/tags/onebusaway-csv-entities-1.0.2</connection>
+    <developerConnection>scm:svn:https://onebusaway.googlecode.com/svn/onebusaway-csv-entities/tags/onebusaway-csv-entities-1.0.2</developerConnection>
+    <url>http://code.google.com/p/onebusaway/source/browse/#svn/onebusaway-csv-entities/tags/onebusaway-csv-entities-1.0.2</url>
   </scm>
 
   <distributionManagement>

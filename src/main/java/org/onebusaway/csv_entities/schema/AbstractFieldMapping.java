@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2011 Brian Ferris <bdferris@onebusaway.org>
+ * Copyright (C) 2011 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +23,7 @@ import java.util.Map;
 import org.onebusaway.csv_entities.exceptions.MethodInvocationException;
 import org.onebusaway.csv_entities.exceptions.MissingRequiredFieldException;
 
-public abstract class AbstractFieldMapping implements FieldMapping {
+public abstract class AbstractFieldMapping implements SingleFieldMapping {
 
   protected final Class<?> _entityType;
 
@@ -51,6 +52,22 @@ public abstract class AbstractFieldMapping implements FieldMapping {
   public void setIsSetMethod(Method isSetMethod) {
     _isSetMethod = isSetMethod;
   }
+
+  /****
+   * {@link SingleFieldMapping}
+   ****/
+
+  public String getCsvFieldName() {
+    return _csvFieldName;
+  }
+
+  public String getObjFieldName() {
+    return _objFieldName;
+  }
+
+  /***
+   * {@link FieldMapping} Interface
+   ****/
 
   public void getCSVFieldNames(Collection<String> names) {
     names.add(_csvFieldName);

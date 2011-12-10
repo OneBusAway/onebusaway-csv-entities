@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2011 Brian Ferris <bdferris@onebusaway.org>
+ * Copyright (C) 2011 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +52,14 @@ public class CsvEntityReader {
   private boolean _trimValues = false;
 
   private boolean _internStrings = false;
+
+  /**
+   * @return the {@link EntitySchemaFactory} that will be used for introspection
+   *         of bean classes
+   */
+  public EntitySchemaFactory getEntitySchemaFactory() {
+    return _entitySchemaFactory;
+  }
 
   public void setEntitySchemaFactory(EntitySchemaFactory entitySchemaFactory) {
     _entitySchemaFactory = entitySchemaFactory;

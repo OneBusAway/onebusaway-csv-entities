@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2011 Brian Ferris <bdferris@onebusaway.org>
+ * Copyright (C) 2011 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,24 +18,17 @@ package org.onebusaway.csv_entities;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.onebusaway.csv_entities.exceptions.CsvEntityIOException;
 import org.onebusaway.csv_entities.schema.DefaultEntitySchemaFactory;
-import org.onebusaway.csv_entities.schema.EntitySchema;
 import org.onebusaway.csv_entities.schema.EntitySchemaFactory;
 
 public class CsvEntityWriter implements EntityHandler {
-
-  private File _outputLocation;
 
   private EntitySchemaFactory _entitySchemaFactory = new DefaultEntitySchemaFactory();
 
   private CsvEntityContext _context = new CsvEntityContextImpl();
 
-  private Map<Class<?>, IndividualCsvEntityWriter> _writersByType = new HashMap<Class<?>, IndividualCsvEntityWriter>();
+  private OutputStrategy _outputStrategy = null;
 
   public EntitySchemaFactory getEntitySchemaFactory() {
     return _entitySchemaFactory;
@@ -45,48 +39,26 @@ public class CsvEntityWriter implements EntityHandler {
   }
 
   public void setOutputLocation(File path) {
-    _outputLocation = path;
+    if( path.getName().endsWith(".zip")) {
+      _outputStrategy = ZipOutputStrategy.create(path);
+    }
+    else {
+      _outputStrategy = new FileOutputStrategy(path);
+    }
   }
 
   public void handleEntity(Object entity) {
     Class<?> entityType = entity.getClass();
-    IndividualCsvEntityWriter writer = getEntityWriter(entityType);
+    IndividualCsvEntityWriter writer = _outputStrategy.getEntityWriter(
+        _entitySchemaFactory, _context, entityType);
     writer.handleEntity(entity);
   }
 
-  public void flush() {
-    for (IndividualCsvEntityWriter writer : _writersByType.values())
-      writer.flush();
+  public void flush() throws IOException {
+    _outputStrategy.flush();
   }
 
-  public void close() {
-    for (IndividualCsvEntityWriter writer : _writersByType.values())
-      writer.close();
-  }
-
-  private IndividualCsvEntityWriter getEntityWriter(Class<?> entityType) {
-
-    IndividualCsvEntityWriter entityWriter = _writersByType.get(entityType);
-    if (entityWriter == null) {
-      EntitySchema schema = _entitySchemaFactory.getSchema(entityType);
-      File outputFile = new File(_outputLocation, schema.getFilename());
-
-      if (!_outputLocation.exists())
-        _outputLocation.mkdirs();
-
-      PrintWriter writer = openOutput(outputFile, entityType);
-      entityWriter = new IndividualCsvEntityWriter(_context, schema, writer);
-      _writersByType.put(entityType, entityWriter);
-    }
-    return entityWriter;
-  }
-
-  private PrintWriter openOutput(File outputFile, Class<?> entityType) {
-    try {
-      return new PrintWriter(outputFile, "UTF-8");
-    } catch (IOException ex) {
-      throw new CsvEntityIOException(entityType, outputFile.getAbsolutePath(),
-          0, ex);
-    }
+  public void close() throws IOException {
+    _outputStrategy.close();
   }
 }

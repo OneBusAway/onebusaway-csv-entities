@@ -35,9 +35,6 @@ public class DefaultFieldMapping extends AbstractFieldMapping {
     _converter = ConvertUtils.lookup(objFieldType);
     if (_converter == null && objFieldType.equals(Object.class))
       _converter = new DefaultConverter();
-    if (_converter == null)
-      throw new NoDefaultConverterException(_entityType, _csvFieldName,
-          _objFieldName, _objFieldType);
   }
 
   public void translateFromCSVToObject(CsvEntityContext context,
@@ -47,6 +44,9 @@ public class DefaultFieldMapping extends AbstractFieldMapping {
       return;
 
     Object csvValue = csvValues.get(_csvFieldName);
+    if (_converter == null)
+      throw new NoDefaultConverterException(_entityType, _csvFieldName,
+          _objFieldName, _objFieldType);
     Object objValue = _converter.convert(_objFieldType, csvValue);
     object.setPropertyValue(_objFieldName, objValue);
   }

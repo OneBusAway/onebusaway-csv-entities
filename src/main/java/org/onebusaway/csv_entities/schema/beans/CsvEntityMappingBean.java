@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.onebusaway.csv_entities.schema.EntityValidator;
 import org.onebusaway.csv_entities.schema.FieldMapping;
+import org.onebusaway.csv_entities.schema.annotations.CsvFieldNameConvention;
 
 public class CsvEntityMappingBean {
 
@@ -43,6 +44,8 @@ public class CsvEntityMappingBean {
   private boolean autoGenerateSchemaSet = false;
 
   private boolean autoGenerateSchema;
+
+  private CsvFieldNameConvention fieldNameConvention;
 
   private List<EntityValidator> _validators = new ArrayList<EntityValidator>();
 
@@ -110,6 +113,14 @@ public class CsvEntityMappingBean {
   public void setAutoGenerateSchema(boolean autoGenerateSchema) {
     this.autoGenerateSchemaSet = true;
     this.autoGenerateSchema = autoGenerateSchema;
+  }
+
+  public CsvFieldNameConvention getFieldNameConvention() {
+    return fieldNameConvention;
+  }
+
+  public void setFieldNameConvention(CsvFieldNameConvention fieldNameConvention) {
+    this.fieldNameConvention = fieldNameConvention;
   }
 
   public void addField(CsvFieldMappingBean field) {

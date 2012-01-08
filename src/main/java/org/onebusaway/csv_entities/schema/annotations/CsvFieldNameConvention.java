@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011 Brian Ferris <bdferris@onebusaway.org>
+ * Copyright (C) 2011 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +15,28 @@
  */
 package org.onebusaway.csv_entities.schema.annotations;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+/**
+ * Control how object field names are converted to CSV column header names.
+ * 
+ * @author bdferris
+ * 
+ */
+public enum CsvFieldNameConvention {
 
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = ElementType.TYPE)
-public @interface CsvFields {
-  String prefix() default "";
-  String filename();
-  boolean required() default true;
-  String[] fieldOrder() default {};
-  CsvFieldNameConvention fieldNameConvention() default CsvFieldNameConvention.UNDERSCORE;
+  /**
+   * The field name conversion is left unspecified. This is used as a default
+   * value for {@link CsvFields#fieldNameConvention()} and typically means the
+   * default behavior will be used: {@link #UNDERSCORE}.
+   */
+  UNSPECIFIED,
+
+  /**
+   * A field name like "thisIsTheName" is converted to "this_is_the_name".
+   */
+  UNDERSCORE,
+
+  /**
+   * A field name like "thisIsTheName" is left as "thisIsTheName".
+   */
+  CAMEL_CASE
 }

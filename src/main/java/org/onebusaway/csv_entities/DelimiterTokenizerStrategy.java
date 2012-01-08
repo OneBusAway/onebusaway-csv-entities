@@ -22,13 +22,32 @@ public class DelimiterTokenizerStrategy implements TokenizerStrategy {
 
   private final String _delimiter;
 
+  private boolean _replaceLiteralNullValues = false;
+
   public DelimiterTokenizerStrategy(String delimiter) {
     _delimiter = delimiter;
   }
 
+  /**
+   * This is a bit of a hack
+   * 
+   * @param replaceLiteralNullValues
+   */
+  public void setReplaceLiteralNullValues(boolean replaceLiteralNullValues) {
+    _replaceLiteralNullValues = replaceLiteralNullValues;
+  }
+
   @Override
   public List<String> parse(String line) {
-    return Arrays.asList(line.split(_delimiter));
+    String[] tokens = line.split(_delimiter);
+    if (_replaceLiteralNullValues) {
+      for (int i = 0; i < tokens.length; ++i) {
+        String value = tokens[i].toLowerCase();
+        if (value.equals("null"))
+          tokens[i] = "";
+      }
+    }
+    return Arrays.asList(tokens);
   }
 
   @Override

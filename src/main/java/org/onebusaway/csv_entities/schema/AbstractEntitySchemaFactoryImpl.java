@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.onebusaway.csv_entities.exceptions.EntityInstantiationException;
 import org.onebusaway.csv_entities.schema.annotations.CsvField;
+import org.onebusaway.csv_entities.schema.annotations.CsvFieldNameConvention;
 import org.onebusaway.csv_entities.schema.annotations.CsvFields;
 import org.onebusaway.csv_entities.schema.beans.CsvEntityMappingBean;
 import org.onebusaway.csv_entities.schema.beans.CsvFieldMappingBean;
@@ -100,6 +101,9 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
       if (fieldsInOrder.length != 0) {
         for (String fieldInOrder : fieldsInOrder)
           entityBean.addFieldInOrder(fieldInOrder);
+      }
+      if (csvFields.fieldNameConvention() != CsvFieldNameConvention.UNSPECIFIED) {
+        entityBean.setFieldNameConvention(csvFields.fieldNameConvention());
       }
     }
   }
@@ -212,6 +216,12 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
     if (mappingBean.isAutoGenerateSchemaSet())
       autoGenerateSchema = mappingBean.isAutoGenerateSchema();
 
+    CsvFieldNameConvention fieldNameConvention = CsvFieldNameConvention.UNSPECIFIED;
+    if (mappingBean.getFieldNameConvention() != null)
+      fieldNameConvention = mappingBean.getFieldNameConvention();
+    if (fieldNameConvention == CsvFieldNameConvention.UNSPECIFIED)
+      fieldNameConvention = CsvFieldNameConvention.UNDERSCORE;
+
     EntitySchema schema = new EntitySchema(entityClass, name, required);
 
     Map<Field, CsvFieldMappingBean> existingFieldBeans = mappingBean.getFields();
@@ -237,7 +247,7 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
           continue;
 
         FieldMapping mapping = getFieldMapping(entityClass, field,
-            fieldMappingBean, prefix);
+            fieldMappingBean, prefix, fieldNameConvention);
         fieldMappings.add(mapping);
       }
     }
@@ -266,7 +276,8 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
   }
 
   private FieldMapping getFieldMapping(Class<?> entityClass, Field field,
-      CsvFieldMappingBean fieldMappingBean, String prefix) {
+      CsvFieldMappingBean fieldMappingBean, String prefix,
+      CsvFieldNameConvention fieldNameConvention) {
 
     FieldMapping mapping = null;
 
@@ -274,7 +285,7 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
     Class<?> objFieldType = field.getType();
 
     String csvFieldName = prefix
-        + getObjectFieldNameAsCSVFieldName(objFieldName);
+        + getObjectFieldNameAsCSVFieldName(objFieldName, fieldNameConvention);
     boolean required = true;
 
     if (fieldMappingBean.isOptionalSet())
@@ -323,7 +334,11 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
     return name;
   }
 
-  private String getObjectFieldNameAsCSVFieldName(String fieldName) {
+  private String getObjectFieldNameAsCSVFieldName(String fieldName,
+      CsvFieldNameConvention fieldNameConvention) {
+
+    if (fieldNameConvention == CsvFieldNameConvention.CAMEL_CASE)
+      return fieldName;
 
     StringBuilder b = new StringBuilder();
     boolean wasUpperCase = false;

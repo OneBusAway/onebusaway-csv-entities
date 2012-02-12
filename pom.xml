@@ -1,17 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.onebusaway</groupId>
+    <artifactId>onebusaway</artifactId>
+    <version>1.1.6</version>
+  </parent>
   <artifactId>onebusaway-csv-entities</artifactId>
   <version>1.0.3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>onebusaway-csv-entities</name>
   <description>A Java library for reading and writing Java objects from comma-separated-values files.</description>
-
-  <parent>
-    <groupId>org.onebusaway</groupId>
-    <artifactId>onebusaway</artifactId>
-    <version>1.1.0</version>
-  </parent>
+  <url>https://github.com/OneBusAway/onebusaway-csv-entities/wiki/</url>
 
   <repositories>
     <repository>
@@ -21,10 +22,15 @@
   </repositories>
 
   <scm>
-    <connection>scm:svn:http://onebusaway.googlecode.com/svn/onebusaway-csv-entities/trunk</connection>
-    <developerConnection>scm:svn:https://onebusaway.googlecode.com/svn/onebusaway-csv-entities/trunk</developerConnection>
-    <url>http://code.google.com/p/onebusaway/source/browse/#svn/onebusaway-csv-entities/trunk</url>
+    <connection>scm:git:http://github.com/OneBusAway/onebusaway-csv-entities.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/OneBusAway/onebusaway-csv-entities.git</developerConnection>
+    <url>http://github.com/OneBusAway/onebusaway-csv-entities</url>
   </scm>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/OneBusAway/onebusaway-csv-entities/issues</url>
+  </issueManagement>
 
   <distributionManagement>
     <!-- Even though we specify this in the parent pom, we need to specify it here to have full control over the url -->
@@ -79,7 +85,7 @@
             <exclude>src/test/resources/org/onebusaway/gtfs/**</exclude>
             <exclude>onebusaway-gtfs/src/test/resources/org/onebusaway/gtfs/**</exclude>
             <exclude>src/test/resources/org/onebusaway/gtfs_transformer/**</exclude>
-            <exclude>onebusaway-gtfs-transformer/src/test/resources/org/onebusaway/gtfs_transformer/**</exclude>            
+            <exclude>onebusaway-gtfs-transformer/src/test/resources/org/onebusaway/gtfs_transformer/**</exclude>
             <exclude>**/usage.txt</exclude>
             <exclude>**/log4j.properties</exclude>
           </excludes>

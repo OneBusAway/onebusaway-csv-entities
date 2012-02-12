@@ -5,7 +5,7 @@
   <packaging>jar</packaging>
 
   <name>onebusaway-csv-entities</name>
-  <description>A Java library for reading and writing entities from comma-separated-values files</description>
+  <description>A Java library for reading and writing Java objects from comma-separated-values files.</description>
 
   <parent>
     <groupId>org.onebusaway</groupId>

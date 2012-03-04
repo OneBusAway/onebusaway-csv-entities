@@ -2,6 +2,21 @@ Release Notes
 
 * ${currentVersion}
 
+  * Add {{{./apidocs/org/onebusaway/csv_entities/schema/DecimalFieldMappingFactory.html}DecimalFieldMappingFactory}}
+    to allow us to control how decimal values are written to CSV using a custom number formatter.
+    
+  * Add support to make it easier to read back values from a mysqldump session.  Specifically, see:
+  
+    * {{{./apidocs/org/onebusaway/csv_entities/DelimiterTokenizerStrategy.html#setReplaceLiteralNullValues(boolean)}DelimiterTokenizerStrategy#setReplaceLiteralNullValues()}}
+    
+    * {{{./apidocs/org/onebusaway/csv_entities/schema/EnumFieldMappingFactory.html}EnumFieldMappingFactory}}
+    
+    * {{{./apidocs/org/onebusaway/csv_entities/schema/annotations/CsvFieldNameConvention.html}CsvFieldNameConvention}}
+    
+  * Support for writing GTFS to a ZIP file instead of just an output directory.
+  
+  * Migration to GitHub.
+  
   * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
 
 * 1.0.2

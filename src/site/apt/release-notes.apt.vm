@@ -2,6 +2,10 @@ Release Notes
 
 * ${currentVersion}
 
+  * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
+
+* 1.0.3
+
   * Add {{{./apidocs/org/onebusaway/csv_entities/schema/DecimalFieldMappingFactory.html}DecimalFieldMappingFactory}}
     to allow us to control how decimal values are written to CSV using a custom number formatter.
     
@@ -17,7 +21,7 @@ Release Notes
   
   * Migration to GitHub.
   
-  * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
+  * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/1.0.3/}}
 
 * 1.0.2
 

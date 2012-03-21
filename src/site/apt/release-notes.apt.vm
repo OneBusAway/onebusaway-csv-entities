@@ -2,6 +2,8 @@ Release Notes
 
 * ${currentVersion}
 
+  * Support for more natural field order in header when writing CSV file - {{{https://github.com/OneBusAway/onebusaway-csv-entities/issues/1}issue}} 
+
   * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
 
 * 1.0.3

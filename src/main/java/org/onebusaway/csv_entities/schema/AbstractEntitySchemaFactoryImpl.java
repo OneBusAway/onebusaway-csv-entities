@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2011 Brian Ferris <bdferris@onebusaway.org>
+ * Copyright (C) 2012 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +24,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.onebusaway.csv_entities.exceptions.EntityInstantiationException;
 import org.onebusaway.csv_entities.schema.annotations.CsvField;
@@ -32,9 +35,13 @@ import org.onebusaway.csv_entities.schema.annotations.CsvFieldNameConvention;
 import org.onebusaway.csv_entities.schema.annotations.CsvFields;
 import org.onebusaway.csv_entities.schema.beans.CsvEntityMappingBean;
 import org.onebusaway.csv_entities.schema.beans.CsvFieldMappingBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractEntitySchemaFactoryImpl implements
     EntitySchemaFactory, ListableCsvMappingFactory {
+
+  private static final Logger _log = LoggerFactory.getLogger(AbstractEntitySchemaFactoryImpl.class);
 
   private boolean _initialized = false;
 
@@ -229,33 +236,53 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
     List<FieldMapping> fieldMappings = new ArrayList<FieldMapping>();
 
     if (autoGenerateSchema) {
+      Set<Field> remainingFields = new HashSet<Field>();
       for (Field field : entityClass.getDeclaredFields()) {
-
-        CsvFieldMappingBean fieldMappingBean = existingFieldBeans.get(field);
-
-        if (fieldMappingBean == null) {
-          fieldMappingBean = new CsvFieldMappingBean(field);
-          applyCsvFieldAnnotationToBean(field, fieldMappingBean);
-
-          // Ignore static or final fields
-          boolean ignore = (field.getModifiers() & (Modifier.FINAL | Modifier.STATIC)) != 0;
-          if (ignore)
-            fieldMappingBean.setIgnore(ignore);
-        }
-
-        if (fieldMappingBean.isIgnoreSet() && fieldMappingBean.isIgnore())
+        remainingFields.add(field);
+      }
+      // We add known fields first so that we can maintain field order.
+      for (Map.Entry<Field, CsvFieldMappingBean> entry : existingFieldBeans.entrySet()) {
+        Field field = entry.getKey();
+        if (!remainingFields.remove(field)) {
+          _log.warn("field found in mapping but not in class: " + field);
           continue;
+        }
+        addFieldMapping(entityClass, prefix, fieldNameConvention, field,
+            entry.getValue(), fieldMappings);
+      }
+      // We add any remaining fields next.
+      for (Field field : remainingFields) {
+        CsvFieldMappingBean fieldMappingBean = new CsvFieldMappingBean(field);
+        applyCsvFieldAnnotationToBean(field, fieldMappingBean);
 
-        FieldMapping mapping = getFieldMapping(entityClass, field,
-            fieldMappingBean, prefix, fieldNameConvention);
-        fieldMappings.add(mapping);
+        // Ignore static or final fields
+        boolean ignore = (field.getModifiers() & (Modifier.FINAL | Modifier.STATIC)) != 0;
+        if (ignore)
+          fieldMappingBean.setIgnore(ignore);
+
+        addFieldMapping(entityClass, prefix, fieldNameConvention, field,
+            fieldMappingBean, fieldMappings);
       }
     }
 
     for (FieldMapping fieldMapping : mappingBean.getAdditionalFieldMappings())
       fieldMappings.add(fieldMapping);
 
-    Collections.sort(fieldMappings, new FieldMappingComparator());
+    List<FieldMapping> sortableMappings = new ArrayList<FieldMapping>();
+    List<FieldMapping> unsortableMappings = new ArrayList<FieldMapping>();
+    for(FieldMapping fieldMapping : fieldMappings) {
+      if(fieldMapping.getOrder() == Integer.MAX_VALUE) {
+        unsortableMappings.add(fieldMapping);
+      } else {
+        sortableMappings.add(fieldMapping);
+      }
+    }
+    if (!sortableMappings.isEmpty() ) {
+      Collections.sort(sortableMappings, new FieldMappingComparator());
+      fieldMappings.clear();
+      fieldMappings.addAll(sortableMappings);
+      fieldMappings.addAll(unsortableMappings);
+    }
 
     for (FieldMapping mapping : fieldMappings)
       schema.addField(mapping);
@@ -273,6 +300,16 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
       schema.setFieldsInOrder(fieldsInOrder);
 
     return schema;
+  }
+
+  private void addFieldMapping(Class<?> entityClass, String prefix,
+      CsvFieldNameConvention fieldNameConvention, Field field,
+      CsvFieldMappingBean fieldMappingBean, List<FieldMapping> fieldMappings) {
+    if (fieldMappingBean.isIgnoreSet() && fieldMappingBean.isIgnore())
+      return;
+    FieldMapping mapping = getFieldMapping(entityClass, field,
+        fieldMappingBean, prefix, fieldNameConvention);
+    fieldMappings.add(mapping);
   }
 
   private FieldMapping getFieldMapping(Class<?> entityClass, Field field,

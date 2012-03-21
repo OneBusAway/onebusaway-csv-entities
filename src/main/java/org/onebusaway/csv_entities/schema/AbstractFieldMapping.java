@@ -33,7 +33,7 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
 
   protected final boolean _required;
 
-  protected int _order = 0;
+  protected int _order = Integer.MAX_VALUE;
 
   protected Method _isSetMethod = null;
 

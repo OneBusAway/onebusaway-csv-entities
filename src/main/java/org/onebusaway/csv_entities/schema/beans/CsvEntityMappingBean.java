@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2011 Brian Ferris <bdferris@onebusaway.org>
+ * Copyright (C) 2012 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +18,7 @@ package org.onebusaway.csv_entities.schema.beans;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,7 @@ public class CsvEntityMappingBean {
 
   private List<EntityValidator> _validators = new ArrayList<EntityValidator>();
 
-  private Map<Field, CsvFieldMappingBean> fields = new HashMap<Field, CsvFieldMappingBean>();
+  private Map<Field, CsvFieldMappingBean> fields = new LinkedHashMap<Field, CsvFieldMappingBean>();
 
   private List<String> fieldsInOrder = new ArrayList<String>();
 

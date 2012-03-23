@@ -21,10 +21,13 @@ import java.io.IOException;
 
 import org.onebusaway.csv_entities.schema.DefaultEntitySchemaFactory;
 import org.onebusaway.csv_entities.schema.EntitySchemaFactory;
+import org.onebusaway.csv_entities.schema.ExcludeOptionalAndMissingEntitySchemaFactory;
 
 public class CsvEntityWriter implements EntityHandler {
 
   private EntitySchemaFactory _entitySchemaFactory = new DefaultEntitySchemaFactory();
+
+  private ExcludeOptionalAndMissingEntitySchemaFactory _excludeOptionalAndMissing = null;
 
   private CsvEntityContext _context = new CsvEntityContextImpl();
 
@@ -39,18 +42,28 @@ public class CsvEntityWriter implements EntityHandler {
   }
 
   public void setOutputLocation(File path) {
-    if( path.getName().endsWith(".zip")) {
+    if (path.getName().endsWith(".zip")) {
       _outputStrategy = ZipOutputStrategy.create(path);
-    }
-    else {
+    } else {
       _outputStrategy = new FileOutputStrategy(path);
     }
   }
 
+  public void excludeOptionalAndMissingFields(Class<?> entityType,
+      Iterable<Object> entities) {
+    if (_excludeOptionalAndMissing == null) {
+      _excludeOptionalAndMissing = new ExcludeOptionalAndMissingEntitySchemaFactory(
+          _entitySchemaFactory);
+    }
+    _excludeOptionalAndMissing.scanEntities(entityType, entities);
+  }
+
   public void handleEntity(Object entity) {
     Class<?> entityType = entity.getClass();
+    EntitySchemaFactory schemaFactory = _excludeOptionalAndMissing != null
+        ? _excludeOptionalAndMissing : _entitySchemaFactory;
     IndividualCsvEntityWriter writer = _outputStrategy.getEntityWriter(
-        _entitySchemaFactory, _context, entityType);
+        schemaFactory, _context, entityType);
     writer.handleEntity(entity);
   }
 

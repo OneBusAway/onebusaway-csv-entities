@@ -29,13 +29,22 @@ public class EntitySchema {
   private Class<?> _entityClass;
 
   private boolean _required;
-  
+
   private List<String> _fieldsInOrder = new ArrayList<String>();
 
   public EntitySchema(Class<?> entityClass, String filename, boolean required) {
     _entityClass = entityClass;
     _filename = filename;
     _required = required;
+  }
+
+  public EntitySchema(EntitySchema schema) {
+    _filename = schema._filename;
+    _fields.addAll(schema._fields);
+    _validators.addAll(schema._validators);
+    _entityClass = schema._entityClass;
+    _required = schema._required;
+    _fieldsInOrder.addAll(schema._fieldsInOrder);
   }
 
   public void addField(FieldMapping field) {
@@ -65,11 +74,11 @@ public class EntitySchema {
   public List<EntityValidator> getValidators() {
     return _validators;
   }
-  
+
   public void setFieldsInOrder(List<String> fieldsInOrder) {
     _fieldsInOrder = fieldsInOrder;
   }
-  
+
   public List<String> getFieldsInOrder() {
     return _fieldsInOrder;
   }

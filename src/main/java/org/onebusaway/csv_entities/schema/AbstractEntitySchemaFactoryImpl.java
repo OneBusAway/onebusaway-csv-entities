@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -126,8 +126,11 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
         fieldBean.setIgnore(csvField.ignore());
       if (csvField.optional())
         fieldBean.setOptional(csvField.optional());
-      if (csvField.order() != 0)
+      if (csvField.order() != Integer.MAX_VALUE)
         fieldBean.setOrder(csvField.order());
+      if (!csvField.defaultValue().isEmpty()) {
+        fieldBean.setDefaultValue(csvField.defaultValue());
+      }
 
       Class<? extends FieldMappingFactory> mapping = csvField.mapping();
       if (!mapping.equals(FieldMappingFactory.class)) {
@@ -196,6 +199,9 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
       target.setOptional(source.isOptional());
     if (source.isOrderSet())
       target.setOrder(source.getOrder());
+    if (source.getDefaultValue() != null) {
+      target.setDefaultValue(source.getDefaultValue());
+    }
   }
 
   private EntitySchema createSchemaForEntityClass(Class<?> entityClass) {
@@ -236,7 +242,7 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
     List<FieldMapping> fieldMappings = new ArrayList<FieldMapping>();
 
     if (autoGenerateSchema) {
-      Set<Field> remainingFields = new HashSet<Field>();
+      Set<Field> remainingFields = new LinkedHashSet<Field>();
       for (Field field : entityClass.getDeclaredFields()) {
         remainingFields.add(field);
       }
@@ -270,14 +276,14 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
 
     List<FieldMapping> sortableMappings = new ArrayList<FieldMapping>();
     List<FieldMapping> unsortableMappings = new ArrayList<FieldMapping>();
-    for(FieldMapping fieldMapping : fieldMappings) {
-      if(fieldMapping.getOrder() == Integer.MAX_VALUE) {
+    for (FieldMapping fieldMapping : fieldMappings) {
+      if (fieldMapping.getOrder() == Integer.MAX_VALUE) {
         unsortableMappings.add(fieldMapping);
       } else {
         sortableMappings.add(fieldMapping);
       }
     }
-    if (!sortableMappings.isEmpty() ) {
+    if (!sortableMappings.isEmpty()) {
       Collections.sort(sortableMappings, new FieldMappingComparator());
       fieldMappings.clear();
       fieldMappings.addAll(sortableMappings);
@@ -357,8 +363,15 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
       mapping = m;
     }
 
-    if (fieldMappingBean.isOrderSet())
-      mapping.setOrder(fieldMappingBean.getOrder());
+    if (mapping instanceof AbstractFieldMapping) {
+      AbstractFieldMapping fm = (AbstractFieldMapping) mapping;
+      if (fieldMappingBean.isOrderSet())
+        fm.setOrder(fieldMappingBean.getOrder());
+
+      if (fieldMappingBean.getDefaultValue() != null) {
+        fm.setDefaultValue(fieldMappingBean.getDefaultValue());
+      }
+    }
 
     return mapping;
   }

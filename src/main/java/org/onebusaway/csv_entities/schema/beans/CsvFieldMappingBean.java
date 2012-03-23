@@ -37,6 +37,8 @@ public class CsvFieldMappingBean {
   
   private boolean orderSet = false;
   private int order;
+  
+  private String defaultValue;
 
   public CsvFieldMappingBean(Field field) {
     this.field = field;
@@ -108,5 +110,13 @@ public class CsvFieldMappingBean {
   public void setOrder(int order) {
     this.orderSet = true;
     this.order = order;
+  }
+
+  public String getDefaultValue() {
+    return defaultValue;
+  }
+
+  public void setDefaultValue(String defaultValue) {
+    this.defaultValue = defaultValue;
   }
 }

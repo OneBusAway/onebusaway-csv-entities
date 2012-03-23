@@ -25,13 +25,17 @@ public interface FieldMapping {
 
   public int getOrder();
 
-  public void setOrder(int order);
-
   public void getCSVFieldNames(Collection<String> names);
 
   public void translateFromCSVToObject(CsvEntityContext context,
-      Map<String, Object> csvValues, BeanWrapper object) throws CsvEntityException;
+      Map<String, Object> csvValues, BeanWrapper object)
+      throws CsvEntityException;
 
   public void translateFromObjectToCSV(CsvEntityContext context,
-      BeanWrapper object, Map<String, Object> csvValues) throws CsvEntityException;
+      BeanWrapper object, Map<String, Object> csvValues)
+      throws CsvEntityException;
+
+  public boolean isMissingAndOptional(Map<String, Object> csvValues);
+
+  public boolean isMissingAndOptional(BeanWrapper object);
 }

@@ -35,6 +35,8 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
 
   protected int _order = Integer.MAX_VALUE;
 
+  protected String _defaultValue = null;
+
   protected Method _isSetMethod = null;
 
   public AbstractFieldMapping(Class<?> entityType, String csvFieldName,
@@ -47,6 +49,10 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
 
   public void setOrder(int order) {
     _order = order;
+  }
+
+  public void setDefaultValue(String defaultValue) {
+    _defaultValue = defaultValue;
   }
 
   public void setIsSetMethod(Method isSetMethod) {
@@ -69,13 +75,40 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
    * {@link FieldMapping} Interface
    ****/
 
+  @Override
   public void getCSVFieldNames(Collection<String> names) {
     names.add(_csvFieldName);
   }
 
+  @Override
   public int getOrder() {
     return _order;
   }
+
+  @Override
+  public boolean isMissingAndOptional(Map<String, Object> csvValues) {
+
+    boolean missing = isMissing(csvValues);
+
+    if (_required && missing)
+      throw new MissingRequiredFieldException(_entityType, _csvFieldName);
+
+    return missing;
+  }
+
+  @Override
+  public boolean isMissingAndOptional(BeanWrapper object) {
+    boolean missing = isMissing(object);
+
+    if (_required && missing)
+      throw new MissingRequiredFieldException(_entityType, _objFieldName);
+
+    return missing;
+  }
+
+  /****
+   * Protected Methods
+   ****/
 
   protected boolean isMissing(Map<String, Object> csvValues) {
     return !(csvValues.containsKey(_csvFieldName) && csvValues.get(
@@ -96,31 +129,19 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
       }
     } else {
       Object obj = object.getPropertyValue(_objFieldName);
-      return obj == null;
+      if (obj == null) {
+        return true;
+      }
+      if (_defaultValue != null && !_defaultValue.isEmpty()) {
+        return _defaultValue.equals(obj.toString());
+      }
+      return (obj instanceof String && obj.toString().isEmpty());
     }
     return false;
-  }
-
-  protected boolean isMissingAndOptional(Map<String, Object> csvValues) {
-
-    boolean missing = isMissing(csvValues);
-
-    if (_required && missing)
-      throw new MissingRequiredFieldException(_entityType, _csvFieldName);
-
-    return missing;
-  }
-
-  protected boolean isMissingAndOptional(BeanWrapper object) {
-    boolean missing = isMissing(object);
-
-    if (_required && missing)
-      throw new MissingRequiredFieldException(_entityType, _objFieldName);
-
-    return missing;
   }
 
   protected boolean isOptional() {
     return !_required;
   }
+
 }

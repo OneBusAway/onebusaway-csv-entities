@@ -23,7 +23,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipFile;
 
 import org.onebusaway.csv_entities.exceptions.CsvEntityIOException;
@@ -52,6 +54,8 @@ public class CsvEntityReader {
   private boolean _trimValues = false;
 
   private boolean _internStrings = false;
+
+  private Map<String, String> _stringTable = new HashMap<String, String>();
 
   /**
    * @return the {@link EntitySchemaFactory} that will be used for introspection
@@ -200,8 +204,12 @@ public class CsvEntityReader {
   private void internStrings(List<String> values) {
     for (int i = 0; i < values.size(); i++) {
       String value = values.get(i);
-      value = value.intern();
-      values.set(i, value);
+      String existing = _stringTable.get(value);
+      if (existing != null) {
+        values.set(i, existing);
+      } else {
+        _stringTable.put(value, value);
+      }
     }
   }
 

@@ -21,11 +21,9 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.onebusaway.csv_entities.CsvEntityReader;
 import org.onebusaway.csv_entities.exceptions.CsvEntityIOException;
 import org.onebusaway.csv_entities.schema.AnnotationDrivenEntitySchemaFactory;
 

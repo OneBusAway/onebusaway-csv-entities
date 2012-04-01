@@ -16,10 +16,13 @@
 package org.onebusaway.csv_entities;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.onebusaway.csv_entities.CsvEntityReader;
@@ -39,17 +42,36 @@ public class CsvEntityReaderTest {
 
     String content = "name,value\na,b\n,d\n";
     StringReader source = new StringReader(content);
-    
+
     try {
       reader.readEntities(AnnotatedTestBean.class, source);
       fail();
     } catch (CsvEntityIOException e) {
       assertEquals(AnnotatedTestBean.class, e.getEntityType());
-      assertEquals(source.toString(),e.getPath());
+      assertEquals(source.toString(), e.getPath());
       assertEquals(3, e.getLineNumber());
     } catch (IOException e) {
       fail();
     }
+  }
+
+  @Test
+  public void testInternString() throws CsvEntityIOException, IOException {
+
+    ListEntityHandler<AnnotatedTestBean> handler = new ListEntityHandler<AnnotatedTestBean>();
+
+    CsvEntityReader reader = new CsvEntityReader();
+    reader.setInternStrings(true);
+    reader.addEntityHandler(handler);
+
+    String content = "name,value\na,b\nc,b\n";
+    StringReader source = new StringReader(content);
+    reader.readEntities(AnnotatedTestBean.class, source);
+
+    List<AnnotatedTestBean> values = handler.getValues();
+    AnnotatedTestBean a = values.get(0);
+    AnnotatedTestBean b = values.get(1);
+    assertSame(a.getValue(), b.getValue());
   }
 
 }

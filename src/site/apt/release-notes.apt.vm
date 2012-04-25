@@ -4,7 +4,10 @@ Release Notes
 
   * Support for more natural field order in header when writing CSV file - {{{https://github.com/OneBusAway/onebusaway-csv-entities/issues/1}issue}}
   
-  * Support for excluding optional columns when no values are specified - {{{https://github.com/OneBusAway/onebusaway-csv-entities/issues/2}issue}} 
+  * Support for excluding optional columns when no values are specified - {{{https://github.com/OneBusAway/onebusaway-csv-entities/issues/2}issue}}
+  
+  * Support for trimming initial whitespace from quoted CSV values (eg. 'a,b,  "c",d').  This includes
+    non-backwards-compatible changes to {{{./apidocs/index.html?org/onebusaway/csv_entities/CSVLibrary.html}CSVLibrary}}.  
 
   * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
 

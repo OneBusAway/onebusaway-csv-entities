@@ -19,27 +19,34 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.onebusaway.csv_entities.CSVLibrary;
 
 public class CSVLibraryTest {
+
+  private CSVLibrary _csv;
+
+  @Before
+  public void before() {
+    _csv = new CSVLibrary();
+  }
 
   @Test
   public void testParse() {
 
-    List<String> tokens = CSVLibrary.parse("a,b,c");
+    List<String> tokens = _csv.parse("a,b,c");
     assertEquals(3, tokens.size());
     assertEquals("a", tokens.get(0));
     assertEquals("b", tokens.get(1));
     assertEquals("c", tokens.get(2));
 
-    tokens = CSVLibrary.parse("a,\"b b\",\"c,c\"");
+    tokens = _csv.parse("a,\"b b\",\"c,c\"");
     assertEquals(3, tokens.size());
     assertEquals("a", tokens.get(0));
     assertEquals("b b", tokens.get(1));
     assertEquals("c,c", tokens.get(2));
 
-    tokens = CSVLibrary.parse("b\"b");
+    tokens = _csv.parse("b\"b");
     assertEquals(1, tokens.size());
     assertEquals("b\"b", tokens.get(0));
   }
@@ -47,43 +54,70 @@ public class CSVLibraryTest {
   @Test
   public void testParseWikipedia() {
 
-    List<String> tokens = CSVLibrary.parse("1997,Ford,E350");
+    List<String> tokens = _csv.parse("1997,Ford,E350");
     assertEquals(3, tokens.size());
     assertEquals("1997", tokens.get(0));
     assertEquals("Ford", tokens.get(1));
     assertEquals("E350", tokens.get(2));
 
-    tokens = CSVLibrary.parse("1997,   Ford   , E350");
+    tokens = _csv.parse("1997,   Ford   , E350");
     assertEquals(3, tokens.size());
     assertEquals("1997", tokens.get(0));
     assertEquals("   Ford   ", tokens.get(1));
     assertEquals(" E350", tokens.get(2));
 
-    tokens = CSVLibrary.parse("1997,Ford,E350,\"Super, luxurious truck\"");
+    tokens = _csv.parse("1997,Ford,E350,\"Super, luxurious truck\"");
     assertEquals(4, tokens.size());
     assertEquals("1997", tokens.get(0));
     assertEquals("Ford", tokens.get(1));
     assertEquals("E350", tokens.get(2));
     assertEquals("Super, luxurious truck", tokens.get(3));
 
-    tokens = CSVLibrary.parse("1997,Ford,E350,\"Super \"\"luxurious\"\" truck\"");
+    tokens = _csv.parse("1997,Ford,E350,\"Super \"\"luxurious\"\" truck\"");
     assertEquals(4, tokens.size());
     assertEquals("1997", tokens.get(0));
     assertEquals("Ford", tokens.get(1));
     assertEquals("E350", tokens.get(2));
     assertEquals("Super \"luxurious\" truck", tokens.get(3));
 
-    tokens = CSVLibrary.parse("1997,Ford,E350,\"  Super luxurious truck    \"");
+    tokens = _csv.parse("1997,Ford,E350,\"  Super luxurious truck    \"");
     assertEquals(4, tokens.size());
     assertEquals("1997", tokens.get(0));
     assertEquals("Ford", tokens.get(1));
     assertEquals("E350", tokens.get(2));
     assertEquals("  Super luxurious truck    ", tokens.get(3));
 
-    tokens = CSVLibrary.parse("\"1997\",\"Ford\",\"E350\"");
+    tokens = _csv.parse("\"1997\",\"Ford\",\"E350\"");
     assertEquals(3, tokens.size());
     assertEquals("1997", tokens.get(0));
     assertEquals("Ford", tokens.get(1));
     assertEquals("E350", tokens.get(2));
+  }
+
+  @Test
+  public void testParseWhitespace() {
+    List<String> tokens = _csv.parse(" \"g\" ");
+    assertEquals(" \"g\" ", tokens.get(0));
+
+    tokens = _csv.parse(" \" h \" ");
+    assertEquals(" \" h \" ", tokens.get(0));
+
+    tokens = _csv.parse(" \" \"\" i \"\" \" ");
+    assertEquals(" \" \"\" i \"\" \" ", tokens.get(0));
+  }
+  
+  @Test
+  public void testTrimInitialWhitespace() {
+    
+    _csv.setTrimInitialWhitespace(true);
+    
+    List<String> tokens = _csv.parse(" \"g\" ");
+    assertEquals("g ", tokens.get(0));
+
+    tokens = _csv.parse(" \" h \" ");
+    assertEquals(" h  ", tokens.get(0));
+
+    tokens = _csv.parse(" \" \"\" i \"\" \" ");
+    assertEquals(" \" i \"  ", tokens.get(0));
   }
 }

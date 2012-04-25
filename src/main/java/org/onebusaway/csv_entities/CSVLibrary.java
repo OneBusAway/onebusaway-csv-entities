@@ -36,7 +36,7 @@ import java.util.List;
 public class CSVLibrary {
 
   private enum EParseState {
-    DATA, DATA_IN_QUOTES, END_QUOTE
+    TRIM_INIT_WHITESPACE, DATA, DATA_IN_QUOTES, END_QUOTE
   };
 
   public static String escapeValue(String value) {
@@ -97,20 +97,24 @@ public class CSVLibrary {
     return csv.toString();
   }
 
-  public static final void parse(InputStream is, CSVListener handler)
-      throws Exception {
+  private boolean _trimInitialWhitespace = false;
+
+  public void setTrimInitialWhitespace(boolean trimInitialWhitespace) {
+    _trimInitialWhitespace = trimInitialWhitespace;
+  }
+
+  public final void parse(InputStream is, CSVListener handler) throws Exception {
     BufferedReader reader = new BufferedReader(new InputStreamReader(is));
     parse(reader, handler);
   }
 
-  public static final void parse(File input, CSVListener handler)
-      throws Exception {
+  public final void parse(File input, CSVListener handler) throws Exception {
     BufferedReader r = new BufferedReader(new FileReader(input));
     parse(r, handler);
   }
 
-  public static void parse(BufferedReader r, CSVListener handler)
-      throws IOException, Exception {
+  public void parse(BufferedReader r, CSVListener handler) throws IOException,
+      Exception {
     String line = null;
     int lineNumber = 1;
 
@@ -128,18 +132,39 @@ public class CSVLibrary {
     r.close();
   }
 
-  public static final List<String> parse(String line) {
+  public final List<String> parse(String line) {
 
     StringBuilder token = new StringBuilder();
     List<StringBuilder> tokens = new ArrayList<StringBuilder>();
     if (line.length() > 0)
       tokens.add(token);
 
-    EParseState state = EParseState.DATA;
+    EParseState state = _trimInitialWhitespace
+        ? EParseState.TRIM_INIT_WHITESPACE : EParseState.DATA;
 
     for (int i = 0; i < line.length(); i++) {
       char c = line.charAt(i);
       switch (state) {
+        case TRIM_INIT_WHITESPACE:
+          switch (c) {
+            case ' ':
+              break;
+            case '"':
+              if (token.length() == 0)
+                state = EParseState.DATA_IN_QUOTES;
+              else
+                token.append(c);
+              break;
+            case ',':
+              token = new StringBuilder();
+              tokens.add(token);
+              break;
+            default:
+              state = EParseState.DATA;
+              token.append(c);
+              break;
+          }
+          break;
         case DATA:
           switch (c) {
             case '"':

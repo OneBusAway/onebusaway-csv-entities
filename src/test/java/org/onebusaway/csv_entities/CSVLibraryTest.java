@@ -1,5 +1,6 @@
 /**
  * Copyright (C) 2011 Brian Ferris <bdferris@onebusaway.org>
+ * Copyright (C) 2012 Google, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,13 +105,19 @@ public class CSVLibraryTest {
 
     tokens = _csv.parse(" \" \"\" i \"\" \" ");
     assertEquals(" \" \"\" i \"\" \" ", tokens.get(0));
+
+    tokens = _csv.parse(" \"a,b\",c");
+    assertEquals(3, tokens.size());
+    assertEquals(" \"a", tokens.get(0));
+    assertEquals("b\"", tokens.get(1));
+    assertEquals("c", tokens.get(2));
   }
-  
+
   @Test
   public void testTrimInitialWhitespace() {
-    
+
     _csv.setTrimInitialWhitespace(true);
-    
+
     List<String> tokens = _csv.parse(" \"g\" ");
     assertEquals("g ", tokens.get(0));
 
@@ -119,5 +126,10 @@ public class CSVLibraryTest {
 
     tokens = _csv.parse(" \" \"\" i \"\" \" ");
     assertEquals(" \" i \"  ", tokens.get(0));
+
+    tokens = _csv.parse(" \"a,b\",c");
+    assertEquals(2, tokens.size());
+    assertEquals("a,b", tokens.get(0));
+    assertEquals("c", tokens.get(1));
   }
 }

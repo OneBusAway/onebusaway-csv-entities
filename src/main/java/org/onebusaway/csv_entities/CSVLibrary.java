@@ -139,8 +139,9 @@ public class CSVLibrary {
     if (line.length() > 0)
       tokens.add(token);
 
-    EParseState state = _trimInitialWhitespace
+    EParseState resetState = _trimInitialWhitespace
         ? EParseState.TRIM_INIT_WHITESPACE : EParseState.DATA;
+    EParseState state = resetState;
 
     for (int i = 0; i < line.length(); i++) {
       char c = line.charAt(i);
@@ -176,6 +177,7 @@ public class CSVLibrary {
             case ',':
               token = new StringBuilder();
               tokens.add(token);
+              state = resetState;
               break;
             default:
               token.append(c);
@@ -201,7 +203,7 @@ public class CSVLibrary {
             case ',':
               token = new StringBuilder();
               tokens.add(token);
-              state = EParseState.DATA;
+              state = resetState;
               break;
             default:
               token.append(c);

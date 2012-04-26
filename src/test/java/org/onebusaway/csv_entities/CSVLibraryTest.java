@@ -127,9 +127,10 @@ public class CSVLibraryTest {
     tokens = _csv.parse(" \" \"\" i \"\" \" ");
     assertEquals(" \" i \"  ", tokens.get(0));
 
-    tokens = _csv.parse(" \"a,b\",c");
-    assertEquals(2, tokens.size());
+    tokens = _csv.parse(" \"a,b\",  c,  \"d\"");
+    assertEquals(3, tokens.size());
     assertEquals("a,b", tokens.get(0));
     assertEquals("c", tokens.get(1));
+    assertEquals("d", tokens.get(2));
   }
 }

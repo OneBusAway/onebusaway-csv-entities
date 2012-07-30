@@ -126,6 +126,9 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
         fieldBean.setIgnore(csvField.ignore());
       if (csvField.optional())
         fieldBean.setOptional(csvField.optional());
+      if(csvField.alwaysIncludeInOutput()) {
+        fieldBean.setAlwaysIncludeInOutput(csvField.alwaysIncludeInOutput());
+      }
       if (csvField.order() != Integer.MAX_VALUE)
         fieldBean.setOrder(csvField.order());
       if (!csvField.defaultValue().isEmpty()) {
@@ -197,6 +200,9 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
       target.setMapping(source.getMapping());
     if (source.isOptionalSet())
       target.setOptional(source.isOptional());
+    if (source.isAlwaysIncludeInOutput()) {
+      target.setAlwaysIncludeInOutput(source.isAlwaysIncludeInOutput());
+    }
     if (source.isOrderSet())
       target.setOrder(source.getOrder());
     if (source.getDefaultValue() != null) {
@@ -367,7 +373,9 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
       AbstractFieldMapping fm = (AbstractFieldMapping) mapping;
       if (fieldMappingBean.isOrderSet())
         fm.setOrder(fieldMappingBean.getOrder());
-
+      if (fieldMappingBean.isAlwaysIncludeInOutputSet()) {
+        fm.setAlwaysIncludeInOutput(fieldMappingBean.isAlwaysIncludeInOutput());
+      }
       if (fieldMappingBean.getDefaultValue() != null) {
         fm.setDefaultValue(fieldMappingBean.getDefaultValue());
       }

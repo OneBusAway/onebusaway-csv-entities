@@ -42,7 +42,7 @@ public class ExcludeOptionalAndMissingEntitySchemaFactory implements
     List<FieldMapping> fields = schema.getFields();
     for (Iterator<FieldMapping> it = fields.iterator(); it.hasNext();) {
       FieldMapping field = it.next();
-      if (allValuesAreMissingAndOptional(field, entities)) {
+      if (!field.isAlwaysIncludeInOutput() && allValuesAreMissingAndOptional(field, entities)) {
         it.remove();
       }
     }

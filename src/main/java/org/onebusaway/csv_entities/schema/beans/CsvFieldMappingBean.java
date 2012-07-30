@@ -32,6 +32,9 @@ public class CsvFieldMappingBean {
   private boolean optionalSet = false;
   private boolean optional;
   
+  private boolean alwaysIncludeInOutputSet = false;
+  private boolean alwaysIncludeInOutput = false;
+  
   private boolean mappingSet = false;
   private FieldMappingFactory mapping;
   
@@ -85,6 +88,19 @@ public class CsvFieldMappingBean {
   public void setOptional(boolean optional) {
     this.optionalSet = true;
     this.optional = optional;
+  }
+
+  public boolean isAlwaysIncludeInOutputSet() {
+    return alwaysIncludeInOutputSet;
+  }
+
+  public boolean isAlwaysIncludeInOutput() {
+    return alwaysIncludeInOutput;
+  }
+
+  public void setAlwaysIncludeInOutput(boolean alwaysIncludeInOutput) {
+    this.alwaysIncludeInOutputSet = true;
+    this.alwaysIncludeInOutput = alwaysIncludeInOutput;
   }
 
   public boolean isMappingSet() {

@@ -38,4 +38,6 @@ public interface FieldMapping {
   public boolean isMissingAndOptional(Map<String, Object> csvValues);
 
   public boolean isMissingAndOptional(BeanWrapper object);
+  
+  public boolean isAlwaysIncludeInOutput();
 }

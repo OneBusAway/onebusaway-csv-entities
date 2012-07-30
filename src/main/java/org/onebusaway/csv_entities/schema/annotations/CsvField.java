@@ -36,4 +36,6 @@ public @interface CsvField {
   int order() default Integer.MAX_VALUE;
   
   String defaultValue() default "";
+  
+  boolean alwaysIncludeInOutput() default false;
 }

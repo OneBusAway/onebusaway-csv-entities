@@ -34,6 +34,8 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
   protected final boolean _required;
 
   protected int _order = Integer.MAX_VALUE;
+  
+  protected boolean _alwaysIncludeInOutput = false;
 
   protected String _defaultValue = null;
 
@@ -53,6 +55,10 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
 
   public void setDefaultValue(String defaultValue) {
     _defaultValue = defaultValue;
+  }
+  
+  public void setAlwaysIncludeInOutput(boolean alwaysIncludeInOutput) {
+    _alwaysIncludeInOutput = alwaysIncludeInOutput;
   }
 
   public void setIsSetMethod(Method isSetMethod) {
@@ -104,6 +110,11 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
       throw new MissingRequiredFieldException(_entityType, _objFieldName);
 
     return missing;
+  }
+  
+  @Override
+  public boolean isAlwaysIncludeInOutput() {
+    return _alwaysIncludeInOutput;
   }
 
   /****

@@ -126,7 +126,7 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
         fieldBean.setIgnore(csvField.ignore());
       if (csvField.optional())
         fieldBean.setOptional(csvField.optional());
-      if(csvField.alwaysIncludeInOutput()) {
+      if (csvField.alwaysIncludeInOutput()) {
         fieldBean.setAlwaysIncludeInOutput(csvField.alwaysIncludeInOutput());
       }
       if (csvField.order() != Integer.MAX_VALUE)
@@ -397,6 +397,10 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
 
     if (fieldNameConvention == CsvFieldNameConvention.CAMEL_CASE)
       return fieldName;
+
+    if (fieldNameConvention == CsvFieldNameConvention.CAPITALIZED_CAMEL_CASE) {
+      return fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+    }
 
     StringBuilder b = new StringBuilder();
     boolean wasUpperCase = false;

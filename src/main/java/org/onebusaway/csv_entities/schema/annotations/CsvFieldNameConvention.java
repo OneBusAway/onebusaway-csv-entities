@@ -38,5 +38,10 @@ public enum CsvFieldNameConvention {
   /**
    * A field name like "thisIsTheName" is left as "thisIsTheName".
    */
-  CAMEL_CASE
+  CAMEL_CASE,
+
+  /**
+   * A field name like "thisIsTheName" is converted to "ThisIsTheName".
+   */
+  CAPITALIZED_CAMEL_CASE
 }

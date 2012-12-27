@@ -44,10 +44,7 @@ public class DefaultFieldMapping extends AbstractFieldMapping {
       return;
 
     Object csvValue = csvValues.get(_csvFieldName);
-    if (_converter == null)
-      throw new NoDefaultConverterException(_entityType, _csvFieldName,
-          _objFieldName, _objFieldType);
-    Object objValue = _converter.convert(_objFieldType, csvValue);
+    Object objValue = convertCsvValue(csvValue);
     object.setPropertyValue(_objFieldName, objValue);
   }
 
@@ -61,4 +58,15 @@ public class DefaultFieldMapping extends AbstractFieldMapping {
     csvValues.put(_csvFieldName, objValue);
   }
 
+  private Object convertCsvValue(Object csvValue) {
+    if (_converter != null) {
+      return _converter.convert(_objFieldType, csvValue);
+    } else if (csvValue != null
+        && _objFieldType.isAssignableFrom(csvValue.getClass())) {
+      return csvValue;
+    } else {
+      throw new NoDefaultConverterException(_entityType, _csvFieldName,
+          _objFieldName, _objFieldType);
+    }
+  }
 }

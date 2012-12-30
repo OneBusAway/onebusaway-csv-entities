@@ -46,7 +46,7 @@ public class CsvEntityReaderTest {
       fail();
     } catch (CsvEntityIOException e) {
       assertEquals(AnnotatedTestBean.class, e.getEntityType());
-      assertEquals(source.toString(), e.getPath());
+      assertEquals("test_beans", e.getPath());
       assertEquals(3, e.getLineNumber());
     } catch (IOException e) {
       fail();

@@ -158,7 +158,7 @@ public class CsvEntityReader {
         lineNumber++;
       }
     } catch (Exception ex) {
-      throw new CsvEntityIOException(entityClass, reader.toString(),
+      throw new CsvEntityIOException(entityClass, schema.getFilename(),
           lineNumber, ex);
     } finally {
       try {

@@ -2,6 +2,16 @@ Release Notes
 
 * ${currentVersion}
 
+  * Trim initial whitespace when parsing CSV
+  
+  * Support for including optional column in output CSV even when no values have been specified  - {{{https://github.com/OneBusAway/onebusaway-csv-entities/issues/3}issue}}
+
+  * Add support for capitalized camel-case CSV field naming conventions (eg. "TheFieldName").
+  
+  * Show a more useful value for file path when throwing a CsvEntityIOException.
+  
+  * Some minor bug fixes and functionality tweaks.
+  
   * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
   
 * 1.1.0

@@ -22,7 +22,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Map;
 
 import org.onebusaway.csv_entities.CsvEntityContext;
@@ -33,12 +35,19 @@ public class DecimalFieldMappingFactory implements FieldMappingFactory {
 
   private String _format;
 
+  private Locale _locale = Locale.getDefault();
+
   public DecimalFieldMappingFactory() {
 
   }
 
   public DecimalFieldMappingFactory(String format) {
     _format = format;
+  }
+
+  public DecimalFieldMappingFactory(String format, Locale locale) {
+    _format = format;
+    _locale = locale;
   }
 
   @Override
@@ -53,35 +62,39 @@ public class DecimalFieldMappingFactory implements FieldMappingFactory {
   }
 
   private NumberFormat getFormat(Class<?> entityType, String objFieldName) {
-    NumberFormat numberFormat = null;
-
-    if (_format != null) {
-      numberFormat = new DecimalFormat(_format);
+    String format = determineFormat(entityType, objFieldName);
+    if (_locale == null) {
+      return new DecimalFormat(format);
     } else {
-
-      Field field = null;
-      try {
-        field = entityType.getDeclaredField(objFieldName);
-      } catch (Exception ex) {
-        throw new IntrospectionException(entityType, ex);
-      }
-      NumberFormatAnnotation formatAnnotation = field.getAnnotation(NumberFormatAnnotation.class);
-
-      if (formatAnnotation == null) {
-        throw new DateFieldMappingException(entityType,
-            "missing required @DateFormatAnnotation for field " + objFieldName
-                + " of type " + entityType);
-      }
-
-      numberFormat = new DecimalFormat(formatAnnotation.value());
+      return new DecimalFormat(format, new DecimalFormatSymbols(_locale));
     }
-    return numberFormat;
   }
 
   @Retention(value = RetentionPolicy.RUNTIME)
   @Target(value = ElementType.FIELD)
   public @interface NumberFormatAnnotation {
     public String value();
+  }
+
+  private String determineFormat(Class<?> entityType, String objFieldName) {
+    if (_format != null) {
+      return _format;
+    }
+
+    Field field = null;
+    try {
+      field = entityType.getDeclaredField(objFieldName);
+    } catch (Exception ex) {
+      throw new IntrospectionException(entityType, ex);
+    }
+    NumberFormatAnnotation formatAnnotation = field.getAnnotation(NumberFormatAnnotation.class);
+
+    if (formatAnnotation == null) {
+      throw new DateFieldMappingException(entityType,
+          "missing required @DateFormatAnnotation for field " + objFieldName
+              + " of type " + entityType);
+    }
+    return formatAnnotation.value();
   }
 
   public static class DateFieldMappingException extends CsvEntityException {

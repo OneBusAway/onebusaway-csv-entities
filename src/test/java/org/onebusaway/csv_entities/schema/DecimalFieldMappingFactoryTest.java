@@ -18,6 +18,7 @@ package org.onebusaway.csv_entities.schema;
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.junit.Test;
@@ -27,11 +28,9 @@ import org.onebusaway.csv_entities.CsvEntityContextImpl;
 public class DecimalFieldMappingFactoryTest {
 
   @Test
-  public void test() {
-    EntitySchemaFactory schemaFactory = new DefaultEntitySchemaFactory();
-    DecimalFieldMappingFactory factory = new DecimalFieldMappingFactory("0.00");
-    FieldMapping mapping = factory.createFieldMapping(schemaFactory,
-        Dummy.class, "value", "value", Double.TYPE, true);
+  public void testWithEnLocale() {
+    DecimalFieldMappingFactory factory = new DecimalFieldMappingFactory("0.00", Locale.US);
+    FieldMapping mapping = createFieldMapping(factory);
 
     Dummy dummy = new Dummy();
     dummy.setValue(3.14159);
@@ -41,6 +40,29 @@ public class DecimalFieldMappingFactoryTest {
     Map<String, Object> values = new HashMap<String, Object>();
     mapping.translateFromObjectToCSV(context, wrapped, values);
     assertEquals("3.14", values.get("value"));
+  }
+
+  @Test
+  public void testWithFrLocale() {
+    DecimalFieldMappingFactory factory = new DecimalFieldMappingFactory("0.00",
+        Locale.FRANCE);
+    FieldMapping mapping = createFieldMapping(factory);
+
+    Dummy dummy = new Dummy();
+    dummy.setValue(3.14159);
+
+    CsvEntityContext context = new CsvEntityContextImpl();
+    BeanWrapper wrapped = BeanWrapperFactory.wrap(dummy);
+    Map<String, Object> values = new HashMap<String, Object>();
+    mapping.translateFromObjectToCSV(context, wrapped, values);
+    assertEquals("3,14", values.get("value"));
+  }
+
+  private FieldMapping createFieldMapping(DecimalFieldMappingFactory factory) {
+    EntitySchemaFactory schemaFactory = new DefaultEntitySchemaFactory();
+    FieldMapping mapping = factory.createFieldMapping(schemaFactory,
+        Dummy.class, "value", "value", Double.TYPE, true);
+    return mapping;
   }
 
   public static class Dummy {

@@ -34,7 +34,7 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
   protected final boolean _required;
 
   protected int _order = Integer.MAX_VALUE;
-  
+
   protected boolean _alwaysIncludeInOutput = false;
 
   protected String _defaultValue = null;
@@ -56,7 +56,7 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
   public void setDefaultValue(String defaultValue) {
     _defaultValue = defaultValue;
   }
-  
+
   public void setAlwaysIncludeInOutput(boolean alwaysIncludeInOutput) {
     _alwaysIncludeInOutput = alwaysIncludeInOutput;
   }
@@ -111,7 +111,7 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
 
     return missing;
   }
-  
+
   @Override
   public boolean isAlwaysIncludeInOutput() {
     return _alwaysIncludeInOutput;
@@ -122,8 +122,12 @@ public abstract class AbstractFieldMapping implements SingleFieldMapping {
    ****/
 
   protected boolean isMissing(Map<String, Object> csvValues) {
-    return !(csvValues.containsKey(_csvFieldName) && csvValues.get(
-        _csvFieldName).toString().length() > 0);
+    return isMissing(csvValues, _csvFieldName);
+  }
+
+  protected static boolean isMissing(Map<String, Object> csvValues,
+      String csvFieldName) {
+    return !(csvValues.containsKey(csvFieldName) && csvValues.get(csvFieldName).toString().length() > 0);
   }
 
   protected boolean isMissing(BeanWrapper object) {

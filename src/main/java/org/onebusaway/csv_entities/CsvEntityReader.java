@@ -125,7 +125,7 @@ public class CsvEntityReader {
 
     EntitySchema schema = _entitySchemaFactory.getSchema(entityClass);
 
-    IndividualCsvEntityReader entityLoader = new IndividualCsvEntityReader(
+    IndividualCsvEntityReader entityLoader = createIndividualCsvEntityReader(
         _context, schema, _handler);
     entityLoader.setTrimValues(_trimValues);
 
@@ -167,6 +167,11 @@ public class CsvEntityReader {
 
       }
     }
+  }
+
+  protected IndividualCsvEntityReader createIndividualCsvEntityReader(
+      CsvEntityContext context, EntitySchema schema, EntityHandler handler) {
+    return new IndividualCsvEntityReader(context, schema, handler);
   }
 
   /**

@@ -21,7 +21,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,9 +34,8 @@ import java.util.List;
  */
 public class CSVLibrary {
 
-  private enum EParseState {
-    TRIM_INIT_WHITESPACE, DATA, DATA_IN_QUOTES, END_QUOTE
-  };
+  private static final DelimitedTextParser _parser = new DelimitedTextParser(
+      ',');
 
   public static String escapeValue(String value) {
     if (value.indexOf(',') != -1 || value.indexOf('"') != -1)
@@ -97,10 +95,8 @@ public class CSVLibrary {
     return csv.toString();
   }
 
-  private boolean _trimInitialWhitespace = false;
-
   public void setTrimInitialWhitespace(boolean trimInitialWhitespace) {
-    _trimInitialWhitespace = trimInitialWhitespace;
+    _parser.setTrimInitialWhitespace(trimInitialWhitespace);
   }
 
   public final void parse(InputStream is, CSVListener handler) throws Exception {
@@ -133,89 +129,6 @@ public class CSVLibrary {
   }
 
   public final List<String> parse(String line) {
-
-    StringBuilder token = new StringBuilder();
-    List<StringBuilder> tokens = new ArrayList<StringBuilder>();
-    if (line.length() > 0)
-      tokens.add(token);
-
-    EParseState resetState = _trimInitialWhitespace
-        ? EParseState.TRIM_INIT_WHITESPACE : EParseState.DATA;
-    EParseState state = resetState;
-
-    for (int i = 0; i < line.length(); i++) {
-      char c = line.charAt(i);
-      switch (state) {
-        case TRIM_INIT_WHITESPACE:
-          switch (c) {
-            case ' ':
-              break;
-            case '"':
-              if (token.length() == 0)
-                state = EParseState.DATA_IN_QUOTES;
-              else
-                token.append(c);
-              break;
-            case ',':
-              token = new StringBuilder();
-              tokens.add(token);
-              break;
-            default:
-              state = EParseState.DATA;
-              token.append(c);
-              break;
-          }
-          break;
-        case DATA:
-          switch (c) {
-            case '"':
-              if (token.length() == 0)
-                state = EParseState.DATA_IN_QUOTES;
-              else
-                token.append(c);
-              break;
-            case ',':
-              token = new StringBuilder();
-              tokens.add(token);
-              state = resetState;
-              break;
-            default:
-              token.append(c);
-              break;
-          }
-          break;
-        case DATA_IN_QUOTES:
-          switch (c) {
-            case '"':
-              state = EParseState.END_QUOTE;
-              break;
-            default:
-              token.append(c);
-              break;
-          }
-          break;
-        case END_QUOTE:
-          switch (c) {
-            case '"':
-              token.append('"');
-              state = EParseState.DATA_IN_QUOTES;
-              break;
-            case ',':
-              token = new StringBuilder();
-              tokens.add(token);
-              state = resetState;
-              break;
-            default:
-              token.append(c);
-              state = EParseState.DATA;
-              break;
-          }
-          break;
-      }
-    }
-    List<String> retro = new ArrayList<String>(tokens.size());
-    for (StringBuilder b : tokens)
-      retro.add(b.toString());
-    return retro;
+    return _parser.parse(line);
   }
 }

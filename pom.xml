@@ -21,9 +21,9 @@
   </repositories>
 
   <scm>
-    <connection>scm:git:http://github.com/OneBusAway/onebusaway-csv-entities.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/OneBusAway/onebusaway-csv-entities.git</developerConnection>
-    <url>http://github.com/OneBusAway/onebusaway-csv-entities</url>
+    <connection>scm:git:https://github.com/OneBusAway/onebusaway-csv-entities.git</connection>
+    <developerConnection>scm:git:https://github.com/OneBusAway/onebusaway-csv-entities.git</developerConnection>
+    <url>https://github.com/OneBusAway/onebusaway-csv-entities</url>
   </scm>
 
   <issueManagement>

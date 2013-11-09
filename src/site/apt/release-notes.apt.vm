@@ -2,6 +2,10 @@ Release Notes
 
 * ${currentVersion}
 
+  * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
+
+* 1.1.2
+
   * Support for parsing CSV-like data with arbitrary separator
     character, still handling escaping and quoting properly.  This basically
     involves making the existing parsing code in CSVLibrary more general.
@@ -12,7 +16,7 @@ Release Notes
   * Allow DecimalFieldMappingFactory to specify a Locale to use for parsing
     and formatting decimal fields.
 
-  * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
+  * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/1.1.2/}}
 
 * 1.1.1
 

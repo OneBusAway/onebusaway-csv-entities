@@ -21,6 +21,7 @@ package org.onebusaway.csv_entities;
 import org.onebusaway.csv_entities.schema.BeanWrapper;
 import org.onebusaway.csv_entities.schema.BeanWrapperFactory;
 import org.onebusaway.csv_entities.schema.EntitySchema;
+import org.onebusaway.csv_entities.schema.ExtensionEntitySchema;
 import org.onebusaway.csv_entities.schema.FieldMapping;
 
 import java.io.PrintWriter;
@@ -63,6 +64,14 @@ class IndividualCsvEntityWriter implements EntityHandler {
       for (FieldMapping field : _schema.getFields())
         field.getCSVFieldNames(_fieldNames);
 
+      if (object instanceof HasExtensions) {
+        for (ExtensionEntitySchema extension : _schema.getExtensions()) {
+          for (FieldMapping field : extension.getFields()) {
+            field.getCSVFieldNames(_fieldNames);
+          }
+        }
+      }
+
       _writer.println(_tokenizerStrategy.format(_fieldNames));
 
       _seenFirstRecord = true;
@@ -70,8 +79,23 @@ class IndividualCsvEntityWriter implements EntityHandler {
 
     BeanWrapper wrapper = BeanWrapperFactory.wrap(object);
     Map<String, Object> csvValues = new HashMap<String, Object>();
-    for (FieldMapping field : _schema.getFields())
+    for (FieldMapping field : _schema.getFields()) {
       field.translateFromObjectToCSV(_context, wrapper, csvValues);
+    }
+    if (object instanceof HasExtensions) {
+      HasExtensions hasExtensions = (HasExtensions) object;
+      for (ExtensionEntitySchema extensionSchema : _schema.getExtensions()) {
+        Object extension = hasExtensions.getExtension(extensionSchema.getEntityClass());
+        if (extension != null) {
+          BeanWrapper extensionWrapper = BeanWrapperFactory.wrap(extension);
+          for (FieldMapping field : extensionSchema.getFields()) {
+            field.translateFromObjectToCSV(_context, extensionWrapper,
+                csvValues);
+          }
+        }
+      }
+    }
+
     List<String> values = new ArrayList<String>(csvValues.size());
     for (String fieldName : _fieldNames) {
       Object value = csvValues.get(fieldName);

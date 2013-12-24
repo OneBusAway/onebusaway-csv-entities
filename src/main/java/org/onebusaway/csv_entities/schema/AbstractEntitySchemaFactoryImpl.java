@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.onebusaway.csv_entities.HasExtensions;
 import org.onebusaway.csv_entities.exceptions.EntityInstantiationException;
 import org.onebusaway.csv_entities.schema.annotations.CsvField;
 import org.onebusaway.csv_entities.schema.annotations.CsvFieldNameConvention;
@@ -47,7 +48,34 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
 
   private Map<Class<?>, CsvEntityMappingBean> _mappingBeansByClass = new HashMap<Class<?>, CsvEntityMappingBean>();
 
+  private Map<Class<?>, List<Class<?>>> _extensionsByClass = new HashMap<Class<?>, List<Class<?>>>();
+
   private Map<Class<?>, EntitySchema> _schemasByClass = new HashMap<Class<?>, EntitySchema>();
+
+  /**
+   * It can be useful to support the reading and writing of additional custom
+   * fields for a particular entity type without the need to modify the base
+   * entity type directly. We support this capability through "extensions":
+   * additional extension entity types, defining their own custom fields, that
+   * are associated with a base entity type and then processed along with the
+   * base entity when reading and writing data. Every time a base entity is
+   * read, an extension entity is also read, and associated with the base entity
+   * via the {@link HasExtensions} interface, which the base entity must
+   * implement in order to support extensions.
+   * 
+   * @param type the base schema entity type to extend
+   * @param extensionType the extension type, with additional fields to read and
+   *          write
+   */
+  public void addExtension(Class<? extends HasExtensions> type,
+      Class<?> extensionType) {
+    List<Class<?>> extensionTypes = _extensionsByClass.get(type);
+    if (extensionTypes == null) {
+      extensionTypes = new ArrayList<Class<?>>();
+      _extensionsByClass.put(type, extensionTypes);
+    }
+    extensionTypes.add(extensionType);
+  }
 
   /****
    * {@link ListableCsvMappingFactory} Interface
@@ -211,29 +239,56 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
   }
 
   private EntitySchema createSchemaForEntityClass(Class<?> entityClass) {
-
-    CsvEntityMappingBean mappingBean = _mappingBeansByClass.get(entityClass);
-
-    if (mappingBean == null) {
-      mappingBean = new CsvEntityMappingBean(entityClass);
-      applyCsvFieldsAnnotationToBean(entityClass, mappingBean);
-    }
+    CsvEntityMappingBean mappingBean = getMappingBeanForEntityType(entityClass);
 
     String name = getEntityClassAsEntityName(entityClass);
     if (mappingBean.isFilenameSet())
       name = mappingBean.getFilename();
 
-    String prefix = "";
-    if (mappingBean.isPrefixSet())
-      prefix = mappingBean.getPrefix();
-
     boolean required = false;
     if (mappingBean.isRequiredSet())
       required = mappingBean.isRequired();
 
-    boolean autoGenerateSchema = true;
-    if (mappingBean.isAutoGenerateSchemaSet())
-      autoGenerateSchema = mappingBean.isAutoGenerateSchema();
+    EntitySchema schema = new EntitySchema(entityClass, name, required);
+
+    fillSchemaForEntityClass(entityClass, mappingBean, schema);
+
+    List<String> fieldsInOrder = mappingBean.getFieldsInOrder();
+    if (!fieldsInOrder.isEmpty())
+      schema.setFieldsInOrder(fieldsInOrder);
+
+    List<Class<?>> extensionTypes = _extensionsByClass.get(entityClass);
+    if (extensionTypes != null) {
+      for (Class<?> extensionType : extensionTypes) {
+        CsvEntityMappingBean extensionMappingBean = getMappingBeanForEntityType(extensionType);
+        ExtensionEntitySchema extensionSchema = new ExtensionEntitySchema(
+            extensionType);
+        fillSchemaForEntityClass(extensionType, extensionMappingBean,
+            extensionSchema);
+        schema.addExtension(extensionSchema);
+      }
+    }
+
+    return schema;
+  }
+
+  private CsvEntityMappingBean getMappingBeanForEntityType(Class<?> entityClass) {
+    CsvEntityMappingBean mappingBean = _mappingBeansByClass.get(entityClass);
+    if (mappingBean == null) {
+      mappingBean = new CsvEntityMappingBean(entityClass);
+      applyCsvFieldsAnnotationToBean(entityClass, mappingBean);
+    }
+    return mappingBean;
+  }
+
+  private void fillSchemaForEntityClass(Class<?> entityClass,
+      CsvEntityMappingBean mappingBean, BaseEntitySchema schema) {
+    Map<Field, CsvFieldMappingBean> existingFieldBeans = mappingBean.getFields();
+    List<FieldMapping> fieldMappings = new ArrayList<FieldMapping>();
+
+    String prefix = "";
+    if (mappingBean.isPrefixSet())
+      prefix = mappingBean.getPrefix();
 
     CsvFieldNameConvention fieldNameConvention = CsvFieldNameConvention.UNSPECIFIED;
     if (mappingBean.getFieldNameConvention() != null)
@@ -241,11 +296,9 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
     if (fieldNameConvention == CsvFieldNameConvention.UNSPECIFIED)
       fieldNameConvention = CsvFieldNameConvention.UNDERSCORE;
 
-    EntitySchema schema = new EntitySchema(entityClass, name, required);
-
-    Map<Field, CsvFieldMappingBean> existingFieldBeans = mappingBean.getFields();
-
-    List<FieldMapping> fieldMappings = new ArrayList<FieldMapping>();
+    boolean autoGenerateSchema = true;
+    if (mappingBean.isAutoGenerateSchemaSet())
+      autoGenerateSchema = mappingBean.isAutoGenerateSchema();
 
     if (autoGenerateSchema) {
       Set<Field> remainingFields = new LinkedHashSet<Field>();
@@ -306,12 +359,6 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
 
     for (EntityValidator validator : validators)
       schema.addValidator(validator);
-
-    List<String> fieldsInOrder = mappingBean.getFieldsInOrder();
-    if (!fieldsInOrder.isEmpty())
-      schema.setFieldsInOrder(fieldsInOrder);
-
-    return schema;
   }
 
   private void addFieldMapping(Class<?> entityClass, String prefix,

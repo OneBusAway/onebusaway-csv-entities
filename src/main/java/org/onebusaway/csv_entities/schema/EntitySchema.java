@@ -18,45 +18,24 @@ package org.onebusaway.csv_entities.schema;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntitySchema {
+public class EntitySchema extends BaseEntitySchema {
 
-  private String _filename;
+  private final String _filename;
 
-  private List<FieldMapping> _fields = new ArrayList<FieldMapping>();
+  private final boolean _required;
 
-  private List<EntityValidator> _validators = new ArrayList<EntityValidator>();
-
-  private Class<?> _entityClass;
-
-  private boolean _required;
-
-  private List<String> _fieldsInOrder = new ArrayList<String>();
+  private List<ExtensionEntitySchema> _extensions = new ArrayList<ExtensionEntitySchema>();
 
   public EntitySchema(Class<?> entityClass, String filename, boolean required) {
-    _entityClass = entityClass;
+    super(entityClass);
     _filename = filename;
     _required = required;
   }
 
   public EntitySchema(EntitySchema schema) {
+    super(schema);
     _filename = schema._filename;
-    _fields.addAll(schema._fields);
-    _validators.addAll(schema._validators);
-    _entityClass = schema._entityClass;
     _required = schema._required;
-    _fieldsInOrder.addAll(schema._fieldsInOrder);
-  }
-
-  public void addField(FieldMapping field) {
-    _fields.add(field);
-  }
-
-  public void addValidator(EntityValidator entityValidator) {
-    _validators.add(entityValidator);
-  }
-
-  public Class<?> getEntityClass() {
-    return _entityClass;
   }
 
   public String getFilename() {
@@ -67,19 +46,11 @@ public class EntitySchema {
     return _required;
   }
 
-  public List<FieldMapping> getFields() {
-    return _fields;
+  public List<ExtensionEntitySchema> getExtensions() {
+    return _extensions;
   }
 
-  public List<EntityValidator> getValidators() {
-    return _validators;
-  }
-
-  public void setFieldsInOrder(List<String> fieldsInOrder) {
-    _fieldsInOrder = fieldsInOrder;
-  }
-
-  public List<String> getFieldsInOrder() {
-    return _fieldsInOrder;
+  public void addExtension(ExtensionEntitySchema extension) {
+    _extensions.add(extension);
   }
 }

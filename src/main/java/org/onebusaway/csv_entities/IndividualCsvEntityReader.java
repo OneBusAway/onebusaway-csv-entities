@@ -19,10 +19,12 @@
 package org.onebusaway.csv_entities;
 
 import org.onebusaway.csv_entities.exceptions.EntityInstantiationException;
+import org.onebusaway.csv_entities.schema.BaseEntitySchema;
 import org.onebusaway.csv_entities.schema.BeanWrapper;
 import org.onebusaway.csv_entities.schema.BeanWrapperFactory;
 import org.onebusaway.csv_entities.schema.EntitySchema;
 import org.onebusaway.csv_entities.schema.EntityValidator;
+import org.onebusaway.csv_entities.schema.ExtensionEntitySchema;
 import org.onebusaway.csv_entities.schema.FieldMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +116,7 @@ public class IndividualCsvEntityReader implements CSVListener {
         line.add("");
     }
 
-    Object object = createNewEntityInstance();
+    Object object = createNewEntityInstance(_schema);
     BeanWrapper wrapper = BeanWrapperFactory.wrap(object);
 
     Map<String, Object> values = new HashMap<String, Object>();
@@ -128,14 +130,26 @@ public class IndividualCsvEntityReader implements CSVListener {
     for (FieldMapping mapping : _schema.getFields())
       mapping.translateFromCSVToObject(_context, values, wrapper);
 
+    if (object instanceof HasExtensions) {
+      HasExtensions hasExtensions = (HasExtensions) object;
+      for (ExtensionEntitySchema extensionSchema : _schema.getExtensions()) {
+        Object extension = createNewEntityInstance(extensionSchema);
+        BeanWrapper extensionWrapper = BeanWrapperFactory.wrap(extension);
+        for (FieldMapping mapping : extensionSchema.getFields()) {
+          mapping.translateFromCSVToObject(_context, values, extensionWrapper);
+        }
+        hasExtensions.putExtension(extensionSchema.getEntityClass(), extension);
+      }
+    }
+
     for (EntityValidator validator : _schema.getValidators())
       validator.validateEntity(_context, values, wrapper);
 
     _handler.handleEntity(object);
   }
 
-  private Object createNewEntityInstance() {
-    Class<?> entityClass = _schema.getEntityClass();
+  private static Object createNewEntityInstance(BaseEntitySchema schema) {
+    Class<?> entityClass = schema.getEntityClass();
     try {
       return entityClass.newInstance();
     } catch (Exception ex) {

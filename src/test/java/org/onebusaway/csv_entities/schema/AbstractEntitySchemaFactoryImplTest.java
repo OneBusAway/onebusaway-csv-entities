@@ -20,6 +20,8 @@ import static org.junit.Assert.*;
 import java.util.List;
 
 import org.junit.Test;
+import org.onebusaway.csv_entities.HasExtensionsImpl;
+import org.onebusaway.csv_entities.schema.annotations.CsvField;
 import org.onebusaway.csv_entities.schema.annotations.CsvFieldNameConvention;
 import org.onebusaway.csv_entities.schema.annotations.CsvFields;
 
@@ -34,6 +36,21 @@ public class AbstractEntitySchemaFactoryImplTest {
     SingleFieldMapping fieldMapping = (SingleFieldMapping) fields.get(0);
     assertEquals("FirstName", fieldMapping.getCsvFieldName());
     assertEquals("firstName", fieldMapping.getObjFieldName());
+  }
+
+  @Test
+  public void testExtensions() {
+    SchemaFactory factory = new SchemaFactory();
+    factory.addExtension(BaseBean.class, ExtensionBean.class);
+
+    EntitySchema schema = factory.getSchema(BaseBean.class);
+    List<ExtensionEntitySchema> extensions = schema.getExtensions();
+    assertEquals(1, extensions.size());
+    ExtensionEntitySchema extensionSchema = extensions.get(0);
+    List<FieldMapping> fields = extensionSchema.getFields();
+    assertEquals(1, fields.size());
+    SingleFieldMapping field = (SingleFieldMapping) fields.get(0);
+    assertEquals("value", field.getCsvFieldName());
   }
 
   private class SchemaFactory extends AbstractEntitySchemaFactoryImpl {
@@ -58,4 +75,12 @@ public class AbstractEntitySchemaFactoryImplTest {
 
   }
 
+  public static class BaseBean extends HasExtensionsImpl {
+
+  }
+
+  public static class ExtensionBean {
+    @CsvField(optional = true)
+    private String value;
+  }
 }

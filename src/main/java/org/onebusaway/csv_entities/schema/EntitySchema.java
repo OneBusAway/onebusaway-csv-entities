@@ -36,6 +36,7 @@ public class EntitySchema extends BaseEntitySchema {
     super(schema);
     _filename = schema._filename;
     _required = schema._required;
+    _extensions = new ArrayList<ExtensionEntitySchema>(schema._extensions);
   }
 
   public String getFilename() {

@@ -2,6 +2,17 @@ Release Notes
 
 * ${currentVersion}
 
+  * Minor bug fixes.
+
+  * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
+
+* 1.1.3
+
+  * Initial support for "extensions".  Extensions allow a user of a
+    CSV-entity-based library to read and write additional data fields that
+    were not original defined in the schema of library entities, without
+    having to modify the library entities source code.
+
   * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
 
 * 1.1.2

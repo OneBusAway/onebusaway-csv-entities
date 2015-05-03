@@ -6,6 +6,12 @@ Release Notes
 
   * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/${currentVersion}/}}
 
+* 1.1.4
+
+  * Minor bug fixes.
+
+  * Full Documentation: {{${site_base_url}/onebusaway-csv-entities/1.1.4/}}
+
 * 1.1.3
 
   * Initial support for "extensions".  Extensions allow a user of a

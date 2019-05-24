@@ -400,8 +400,6 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
       DefaultFieldMapping m = new DefaultFieldMapping(entityClass,
           csvFieldName, objFieldName, objFieldType, required);
 
-      setIsSetMethod(entityClass, field, m);
-
       mapping = m;
     }
 
@@ -416,27 +414,23 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
         fm.setDefaultValue(fieldMappingBean.getDefaultValue());
       }
 
-      setIsSetMethod(entityClass, field, fm);
+      try {
+        String name = field.getName();
+        String isFieldSet = "is" + Character.toUpperCase(name.charAt(0))
+                + name.substring(1) + "Set";
+
+        Method method = entityClass.getMethod(isFieldSet);
+        if (method != null
+                && (method.getReturnType() == Boolean.class || method.getReturnType() == Boolean.TYPE)) {
+          fm.setIsSetMethod(method);
+        }
+      } catch (Exception ex) {
+        // We ignore this
+      }
 
     }
 
     return mapping;
-  }
-
-  private static void setIsSetMethod(Class<?> entityClass, Field field, AbstractFieldMapping fm) {
-    try {
-      String name = field.getName();
-      String isFieldSet = "is" + Character.toUpperCase(name.charAt(0))
-              + name.substring(1) + "Set";
-
-      Method method = entityClass.getMethod(isFieldSet);
-      if (method != null
-              && (method.getReturnType() == Boolean.class || method.getReturnType() == Boolean.TYPE)) {
-        fm.setIsSetMethod(method);
-      }
-    } catch (Exception ex) {
-      // We ignore this
-    }
   }
 
   private String getEntityClassAsEntityName(Class<?> entityClass) {

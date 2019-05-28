@@ -75,6 +75,8 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
       _extensionsByClass.put(type, extensionTypes);
     }
     extensionTypes.add(extensionType);
+
+    _schemasByClass.remove(type);
   }
 
   /****

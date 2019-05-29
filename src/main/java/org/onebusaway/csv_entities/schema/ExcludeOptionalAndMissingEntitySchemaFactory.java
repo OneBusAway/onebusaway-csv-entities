@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.onebusaway.csv_entities.HasExtensions;
 import org.onebusaway.csv_entities.exceptions.MissingRequiredEntityException;
 
 public class ExcludeOptionalAndMissingEntitySchemaFactory implements
@@ -46,6 +47,15 @@ public class ExcludeOptionalAndMissingEntitySchemaFactory implements
         it.remove();
       }
     }
+    for (ExtensionEntitySchema extensionSchema : schema.getExtensions()) {
+      fields = extensionSchema.getFields();
+      for (Iterator<FieldMapping> it = fields.iterator(); it.hasNext();) {
+        FieldMapping field = it.next();
+        if (!field.isAlwaysIncludeInOutput() && allExtensionValuesAreMissingAndOptional(field, extensionSchema.getEntityClass(), entities)) {
+          it.remove();
+        }
+      }
+    }
     _schemas.put(entityClass, schema);
   }
 
@@ -69,15 +79,34 @@ public class ExcludeOptionalAndMissingEntitySchemaFactory implements
   private boolean allValuesAreMissingAndOptional(FieldMapping field,
       Iterable<Object> entities) {
     for (Object entity : entities) {
-      BeanWrapper wrapped = BeanWrapperFactory.wrap(entity);
-      try {
-        if (!field.isMissingAndOptional(wrapped)) {
-          return false;
+      if (fieldIsNotMissingOrOptional(field, entity)) return false;
+    }
+    return true;
+  }
+
+  private boolean allExtensionValuesAreMissingAndOptional(FieldMapping field,
+                                                          Class<?> extensionType,
+                                                          Iterable<Object> entities) {
+    for (Object entity : entities) {
+      if (entity instanceof HasExtensions) {
+        Object extension = ((HasExtensions) entity).getExtension(extensionType);
+        if (extension != null) {
+          if (fieldIsNotMissingOrOptional(field, extension)) return false;
         }
-      } catch (MissingRequiredEntityException ex) {
-        return false;
       }
     }
     return true;
+  }
+
+  private boolean fieldIsNotMissingOrOptional(FieldMapping field, Object entity) {
+    BeanWrapper wrapped = BeanWrapperFactory.wrap(entity);
+    try {
+      if (!field.isMissingAndOptional(wrapped)) {
+        return true;
+      }
+    } catch (MissingRequiredEntityException ex) {
+      return true;
+    }
+    return false;
   }
 }

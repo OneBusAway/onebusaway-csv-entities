@@ -89,4 +89,33 @@ public class IndividualCsvEntityWriterTest {
     assertEquals("value,name\na,alice\nb,bob\n", content);
   }
 
+  @Test
+  public void testDefaultValues() {
+    DefaultEntitySchemaFactory factory = new DefaultEntitySchemaFactory();
+
+    CsvEntityContextImpl context = new CsvEntityContextImpl();
+    StringWriter output = new StringWriter();
+
+    IndividualCsvEntityWriter writer = new IndividualCsvEntityWriter(context,
+            factory.getSchema(OptionalFieldTestBean.class), new PrintWriter(output));
+
+    OptionalFieldTestBean tb = new OptionalFieldTestBean();
+
+    tb.setIntValue(1234);
+    tb.setDoubleValue(2345.8);
+
+    writer.handleEntity(tb);
+
+    tb.clearIntValue();
+    tb.clearDoubleValue();
+
+    writer.handleEntity(tb);
+
+    writer.close();
+
+    String content = output.getBuffer().toString();
+    assertEquals("int_value,double_value" + System.lineSeparator() +
+            "1234,2345.80" + System.lineSeparator() + "," + System.lineSeparator(), content);
+  }
+
 }

@@ -400,19 +400,6 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
       DefaultFieldMapping m = new DefaultFieldMapping(entityClass,
           csvFieldName, objFieldName, objFieldType, required);
 
-      try {
-        String name = field.getName();
-        String isFieldSet = "is" + Character.toUpperCase(name.charAt(0))
-            + name.substring(1) + "Set";
-        Method method = entityClass.getMethod(isFieldSet);
-        if (method != null
-            && (method.getReturnType() == Boolean.class || method.getReturnType() == Boolean.TYPE)) {
-          m.setIsSetMethod(method);
-        }
-      } catch (Exception ex) {
-        // We ignore this
-      }
-
       mapping = m;
     }
 
@@ -426,6 +413,21 @@ public abstract class AbstractEntitySchemaFactoryImpl implements
       if (fieldMappingBean.getDefaultValue() != null) {
         fm.setDefaultValue(fieldMappingBean.getDefaultValue());
       }
+
+      try {
+        String name = field.getName();
+        String isFieldSet = "is" + Character.toUpperCase(name.charAt(0))
+                + name.substring(1) + "Set";
+
+        Method method = entityClass.getMethod(isFieldSet);
+        if (method != null
+                && (method.getReturnType() == Boolean.class || method.getReturnType() == Boolean.TYPE)) {
+          fm.setIsSetMethod(method);
+        }
+      } catch (Exception ex) {
+        // We ignore this
+      }
+
     }
 
     return mapping;

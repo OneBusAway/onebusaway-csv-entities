@@ -55,7 +55,7 @@ public class IndividualCsvEntityWriterTest {
     writer.close();
 
     String content = output.getBuffer().toString();
-    assertEquals("name,value\nalice,a\nbob,b\n", content);
+    assertEquals("name,value" + System.lineSeparator() + "alice,a" + System.lineSeparator() + "bob,b" + System.lineSeparator(), content);
   }
 
   @Test
@@ -86,7 +86,7 @@ public class IndividualCsvEntityWriterTest {
     writer.close();
 
     String content = output.getBuffer().toString();
-    assertEquals("value,name\na,alice\nb,bob\n", content);
+    assertEquals("value,name" + System.lineSeparator() + "a,alice" + System.lineSeparator() + "b,bob" + System.lineSeparator(), content);
   }
 
   @Test

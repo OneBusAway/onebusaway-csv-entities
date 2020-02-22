@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.onebusaway</groupId>
     <artifactId>onebusaway</artifactId>
-    <version>1.1.10</version>
+    <version>1.2.6-SNAPSHOT</version>
   </parent>
   <artifactId>onebusaway-csv-entities</artifactId>
   <version>1.1.7-SNAPSHOT</version>
@@ -12,13 +12,6 @@
   <name>onebusaway-csv-entities</name>
   <description>A Java library for reading and writing Java objects from comma-separated-values files.</description>
   <url>https://github.com/OneBusAway/onebusaway-csv-entities/wiki/</url>
-
-  <repositories>
-    <repository>
-      <id>public.onebusaway.org</id>
-      <url>http://nexus.onebusaway.org/content/groups/public/</url>
-    </repository>
-  </repositories>
 
   <scm>
     <connection>scm:git:https://github.com/OneBusAway/onebusaway-csv-entities.git</connection>

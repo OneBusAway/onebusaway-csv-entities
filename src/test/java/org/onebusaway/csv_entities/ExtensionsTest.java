@@ -15,8 +15,11 @@
  */
 package org.onebusaway.csv_entities;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.onebusaway.csv_entities.schema.DefaultEntitySchemaFactory;
+import org.onebusaway.csv_entities.schema.ExcludeOptionalAndMissingEntitySchemaFactory;
+import org.onebusaway.csv_entities.schema.annotations.CsvField;
+import org.onebusaway.csv_entities.schema.annotations.CsvFields;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,12 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipFile;
 
-import org.junit.Test;
-import org.onebusaway.csv_entities.schema.DefaultEntitySchemaFactory;
-import org.onebusaway.csv_entities.schema.annotations.CsvFields;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ExtensionsTest {
 
@@ -94,6 +97,40 @@ public class ExtensionsTest {
     assertEquals("name,value\nBirds,flighty\n", data);
   }
 
+  @Test
+  public void testWriteEmptyExtensions() throws IOException {
+    BaseBean bean = new BaseBean();
+    bean.setName("Birds");
+    ExtensionBean extension = new ExtensionBean();
+    extension.setValue("flighty");
+    bean.putExtension(ExtensionBean.class, extension);
+    ExtensionBean2 extension2 = new ExtensionBean2();
+    bean.putExtension(ExtensionBean2.class, extension2);
+
+    DefaultEntitySchemaFactory factory = new DefaultEntitySchemaFactory();
+    factory.addExtension(BaseBean.class, ExtensionBean.class);
+    factory.addExtension(BaseBean.class, ExtensionBean2.class);
+
+    ExcludeOptionalAndMissingEntitySchemaFactory excludeFactory = new ExcludeOptionalAndMissingEntitySchemaFactory(factory);
+    excludeFactory.scanEntities(BaseBean.class, Collections.<Object>singleton(bean));
+
+    CsvEntityWriter writer = new CsvEntityWriter();
+    writer.setEntitySchemaFactory(excludeFactory);
+
+    File output = File.createTempFile("ExtensionsText", ".zip");
+    output.delete();
+    output.deleteOnExit();
+
+    writer.setOutputLocation(output);
+
+    writer.handleEntity(bean);
+    writer.close();
+
+    ZipFile zip = new ZipFile(output);
+    String data = read(zip.getInputStream(zip.getEntry("animals.csv")));
+    assertEquals("name,value\nBirds,flighty\n", data);
+  }
+
   private static String read(InputStream in) throws IOException {
     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
     StringBuilder b = new StringBuilder();
@@ -127,6 +164,19 @@ public class ExtensionsTest {
 
     public void setValue(String value) {
       this.value = value;
+    }
+  }
+
+  public static class ExtensionBean2 {
+    @CsvField(defaultValue = "0", optional = true)
+    private int emptyValue = 0;
+
+    public int getEmptyValue() {
+      return emptyValue;
+    }
+
+    public void setEmptyValue(int emptyValue) {
+      this.emptyValue = emptyValue;
     }
   }
 }

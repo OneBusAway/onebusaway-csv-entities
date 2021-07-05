@@ -53,6 +53,18 @@ public class AbstractEntitySchemaFactoryImplTest {
     assertEquals("value", field.getCsvFieldName());
   }
 
+  @Test
+  public void testExtensionsAfterSchemaIsCached() {
+    SchemaFactory factory = new SchemaFactory();
+    EntitySchema entitySchema = factory.getSchema(BaseBean.class);
+    assertTrue(entitySchema.getExtensions().isEmpty());
+
+    factory.addExtension(BaseBean.class, ExtensionBean.class);
+
+    entitySchema = factory.getSchema(BaseBean.class);
+    assertEquals(1, entitySchema.getExtensions().size());
+  }
+
   private class SchemaFactory extends AbstractEntitySchemaFactoryImpl {
     @Override
     protected void processBeanDefinitions() {

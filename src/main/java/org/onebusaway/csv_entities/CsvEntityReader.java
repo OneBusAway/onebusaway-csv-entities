@@ -33,9 +33,13 @@ import org.onebusaway.csv_entities.exceptions.MissingRequiredEntityException;
 import org.onebusaway.csv_entities.schema.DefaultEntitySchemaFactory;
 import org.onebusaway.csv_entities.schema.EntitySchema;
 import org.onebusaway.csv_entities.schema.EntitySchemaFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CsvEntityReader {
 
+  private static Logger _log = LoggerFactory.getLogger(CsvEntityReader.class);
+	
   public static final String KEY_CONTEXT = CsvEntityReader.class.getName()
       + ".context";
 
@@ -158,6 +162,7 @@ public class CsvEntityReader {
         lineNumber++;
       }
     } catch (Exception ex) {
+      _log.error("csv parse exception:", ex);	
       throw new CsvEntityIOException(entityClass, schema.getFilename(),
           lineNumber, ex);
     } finally {

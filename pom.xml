@@ -6,7 +6,7 @@
     <version>1.2.9</version>
   </parent>
   <artifactId>onebusaway-csv-entities</artifactId>
-  <version>1.1.7-SNAPSHOT</version>
+  <version>1.1.7</version>
   <packaging>jar</packaging>
 
   <name>onebusaway-csv-entities</name>
@@ -48,6 +48,7 @@
     <connection>scm:git:https://github.com/OneBusAway/onebusaway-csv-entities.git</connection>
     <developerConnection>scm:git:https://github.com/OneBusAway/onebusaway-csv-entities.git</developerConnection>
     <url>https://github.com/OneBusAway/onebusaway-csv-entities</url>
+    <tag>onebusaway-csv-entities-1.1.7</tag>
   </scm>
 
   <issueManagement>

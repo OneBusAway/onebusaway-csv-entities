@@ -90,23 +90,23 @@ public class DecimalFieldMappingFactory implements FieldMappingFactory {
     NumberFormatAnnotation formatAnnotation = field.getAnnotation(NumberFormatAnnotation.class);
 
     if (formatAnnotation == null) {
-      throw new DateFieldMappingException(entityType,
-          "missing required @DateFormatAnnotation for field " + objFieldName
+      throw new DecimalFieldMappingException(entityType,
+          "missing required @NumberFormatAnnotation for field " + objFieldName
               + " of type " + entityType);
     }
     return formatAnnotation.value();
   }
 
-  public static class DateFieldMappingException extends CsvEntityException {
+  public static class DecimalFieldMappingException extends CsvEntityException {
 
     private static final long serialVersionUID = 1L;
 
-    public DateFieldMappingException(Class<?> entityType, String message) {
+    public DecimalFieldMappingException(Class<?> entityType, String message) {
       super(entityType, message);
     }
 
-    public DateFieldMappingException(Class<?> entityType, String message,
-        Throwable cause) {
+    public DecimalFieldMappingException(Class<?> entityType, String message,
+                                        Throwable cause) {
       super(entityType, message, cause);
     }
   }
@@ -132,8 +132,8 @@ public class DecimalFieldMappingFactory implements FieldMappingFactory {
 
       Number n = (Number) object.getPropertyValue(_objFieldName);
 
-      String dateAsString = _numberFormat.format(n);
-      csvValues.put(_csvFieldName, dateAsString);
+      String numberAsString = _numberFormat.format(n);
+      csvValues.put(_csvFieldName, numberAsString);
     }
   }
 }

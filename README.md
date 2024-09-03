@@ -1,3 +1,5 @@
 # onebusaway-csv-entities
 
-Provides a library for reading and writing Java objects from CSV files.
+## Archived
+
+The source code has moved to https://github.com/OneBusAway/onebusaway-gtfs-modules/tree/master/onebusaway-csv-entities
